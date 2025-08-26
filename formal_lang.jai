@@ -1,4 +1,24 @@
+Statement :: struct {
+	arg: []Token;
+	res: []Token;
+}
+
+Token :: struct {
+	type: enum {OPERATOR; SUMSET; EXPRESSION;};
+	content: union {
+		op: enum {COMMA, EQUALS};
+		set: u64;
+		expression: int;
+	};
+}
+
 main :: () {
+	specification := "a := 3; l := a; a + a := 4;";
+	query := "l + a";
+
+}
+
+get_token :: (spec *string) -> Token {
 
 }
 
