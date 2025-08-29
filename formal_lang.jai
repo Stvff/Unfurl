@@ -1,21 +1,92 @@
-// statements: [..]Statement;
-// expression_arena: [..][]Token;
-// token_arena: [..]Token;
+Expression_Index :: int;
 
 Token :: struct {
-	type: enum {OPERATOR; SET; EXPRESSION;};
+	type: enum {OPERATOR; SET; EXPRESSION; NAME;};
 	content: union {
-		op: enum {COMMA, EQUALS};
-		set: u64;
-		expression: int;
+		op: enum {COMMA; EQUALS;};
+		set: [4]u64;
+		expression: Expression_Index;
 	};
 	name: string;
 }
 
-// Statement :: struct {
-// 	arg: int;
-// 	res: int;
-// }
+Statement :: struct {
+	arg: Expression_Index;
+	res: Expression_Index;
+}
+
+tokenize :: (token_arena: *[..]Token, expression_arena: [..][]Token, code: string, is_res: bool) -> (expression_index: Expression_Index, parsed_token_amount: int) {
+	expr: [..]Token;
+	expr.allocator = temp;
+
+	name_prev_token := false;
+	index := 0;
+	while true {
+		if index > code.count-1 break;
+		char := code[index];
+		fp: string;
+		fp.data = code.data + index;
+		fp.count = 1;
+		print("%\n", fp);
+		if char == {
+		case "(";
+			new_code := code;
+			new_code.data += index + 1;
+			new_code.count -= index + 1;
+			index_of_that, amount_parsed := tokenize(token_arena, expression_arena, new_code, is_res);
+			index += amount_parsed;
+
+			token := Token.{
+				type = .EXPRESSION,
+				content.expression = index_of_that,
+			};
+			array_add(*expr, token);
+		case ")";
+			index_of_this := token_arena.count;
+			array_add(token_arena, ..expr);
+			expression: []Token;
+			expression.data = token_arena.data + index_of_this;
+			return index_of_this, index;
+		case "=";
+			token := Token.{
+				type = .OPERATOR,
+				content.op = .EQUALS,
+			};
+			array_add(*expr, token);
+		case ",";
+			token := Token.{
+				type = .OPERATOR,
+				content.op = .COMMA,
+			};
+			array_add(*expr, token);
+		case "_";
+			if is_res {
+				token := Token.{type = .NAME};
+				array_add(*expr, token);
+			}
+			name_prev_token = true;
+		case;
+			if name_prev_token {
+				expr[expr.count-1].name.data = code.data + index;
+				expr[expr.count-1].name.count = 1;
+			} else {
+				stage_1 := char / 64;
+				stage_2 := char % 64;
+				set: [4]u64;
+				set[stage_1] = cast(u64, 1 << stage_2);
+				token := Token.{
+					type = .SET,
+					content.set = set,
+				};
+				array_add(*expr, token);
+			}
+		}
+		index += 1;
+	}
+	index_of_this := token_arena.count;
+	array_add(token_arena, ..expr);
+	return index_of_this, index;
+}
 
 Code_Statement :: struct {
 	arg, res: string;
@@ -37,6 +108,8 @@ p := 3, 4, 5, 6;
 # (q = p)_n := 1 + _n;
 v := 3;
 # v:
+0 1, 2 = 3, 4 5:
+0 ((1, 2) = (3, 4)) 5:
 
 FORMAL_LANG
 	condensed_code: [..]u8; /* this is the backing character 'arena' */
@@ -97,11 +170,25 @@ FORMAL_LANG
 			array_add(*code_queries, q);
 		}
 
-		for code_statements print("% := %;\n", it.arg, it.res);
-		for code_queries print("%:\n", it);
+	}
+	for code_statements print("% := %;\n", it.arg, it.res);
+	for code_queries print("%:\n", it);
+
+	tokens: [..]Token;
+	expressions: [..][]Token;
+	statements: [..]Statement;
+	for code_statements {
+		statement: Statement;
+		statement.res = tokenize(*tokens, it.res, true);
+		statement.arg = tokenize(*tokens, it.arg, false);
+		array_add(*statements, statement);
+		reset_temporary_storage();
 	}
 
-
+	for code_statements {
+		print_expression(tokens
+	}
+	print("%\n", tokens);
 }
 
 #import "Basic";
