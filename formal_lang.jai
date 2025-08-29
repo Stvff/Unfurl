@@ -144,7 +144,7 @@ tokenize :: (token_arena: *[..]Token, code: string, is_res: bool) -> (expression
 	while true {
 		if index > code.count-1 break;
 		char := code[index];
-//		print("%\n", cas(*char));
+		// print("%\n", cas(*char));
 		if char == {
 		case "(";
 			new_code := code;
@@ -161,7 +161,7 @@ tokenize :: (token_arena: *[..]Token, code: string, is_res: bool) -> (expression
 		case ")";
 			index_of_this := token_arena.count;
 			array_add(token_arena, ..expr);
-			return .{index_of_this, expr.count}, index;
+			return .{index_of_this, expr.count}, index + 1;
 		case "=";
 			token := Token.{
 				type = .OPERATOR,
