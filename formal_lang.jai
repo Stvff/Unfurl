@@ -73,6 +73,18 @@ FORMAL_LANG
 	for queries print("%:\n", to_string(tokens, it));
 	print("---------------------\n");
 
+	for query: queries {
+		for stage: 1..query.count {
+			width := query.count - stage;
+			for l: 0..width {
+				//print("[% %]", l, stage);
+				print("% ", to_string(tokens, Expression.{query.offset + l, stage}));
+			}
+			print("\n");
+		}
+		print("\n");
+	}
+
 //	print("%\n", statements);
 }
 
