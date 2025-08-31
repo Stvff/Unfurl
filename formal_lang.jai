@@ -14,41 +14,15 @@ Solution :: struct {
 }
 
 main :: () {
-	code := #string FORMAL_LANG
+	os_args := get_command_line_arguments();
+	os_args.data += 1; os_args.count -= 1;
+	code: [..]u8;
+	for os_args {
+		file, ok := read_entire_file(it);
+		if !ok return;
+		array_add(*code, .. cast([]u8, file));
+	}
 
-q + 0 := 1;
-q + 1 := 2;
-q + 2 := 3;
-q + 3 := 0;
-0 +   := ;
-1 +   := q + ;
-2 +   := 1 + q + ;
-3 +   := 2 + q + ;
-
-1 + 2:
-2 + 3:
-2 + 1:
-
-1 + 1 + 1 + 1:
-1 + q + 1:
-
-O +    := ;
-SO - S := O - ;
-O - O  := O;
-
-SSO + SSSO:
-SSO - SO:
-SSO - SSSO:
-
-SSO + SSSO - SO - SSSO:
-
-FORMAL_LANG
-/*
-
-
-
-
-*/
 	tokens: [..]u8; /* this is the backing character 'arena' */
 	statements: [..]Statement;
 	queries: [..]Expression;
@@ -181,4 +155,4 @@ cas :: inline (char: *u8) -> string {
 }
 
 #import "Basic";
-#import "Memory";
+#import "File";
