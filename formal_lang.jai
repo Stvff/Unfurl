@@ -40,6 +40,8 @@ SSO + SSSO:
 SSO - SO:
 SSO - SSSO:
 
+SSO + SSSO - SO - SSSO:
+
 FORMAL_LANG
 /*
 
@@ -85,7 +87,7 @@ FORMAL_LANG
 		}
 	}
 	for statements print("% := %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
-	for queries print("%:\n", to_string(tokens, it));
+//	for queries print("%:\n", to_string(tokens, it));
 	print("---------------------\n");
 
 	solutions: [..]Solution;
@@ -106,12 +108,13 @@ FORMAL_LANG
 				// print("\n");
 			}
 		}
-		for solutions if it.state == .SOLVED print("%, state: %\n", to_string(tokens, it.expression), it.state);
-		print("\n");
+
+		print("%: % comparisons, solutions:\n", to_string(tokens, query), cmp_counter);
+		cmp_counter = 0;
+		for solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
 		array_reset(*solutions);
 		print("\n");
 	}
-
 }
 
 eval_step :: (statements: []Statement, arena: *[..]u8, query: Expression, solutions: *[..]Solution) -> bool {
@@ -147,9 +150,12 @@ eval_step :: (statements: []Statement, arena: *[..]u8, query: Expression, soluti
 	return something_found;
 }
 
+cmp_counter := 0;
+
 cmp :: (arena: []u8, e1: Expression, e2: Expression) -> bool {
 	s1 := to_string(arena, e1);
 	s2 := to_string(arena, e2);
+	cmp_counter += 1;
 	return s1 == s2;
 }
 
