@@ -8,6 +8,11 @@ Statement :: struct {
 	res: Expression;
 }
 
+Solution :: struct {
+	state: enum {NEW; ANALYZED; SOLVED; };
+	expression: Expression;
+}
+
 main :: () {
 	code := #string FORMAL_LANG
 
@@ -19,19 +24,29 @@ q + 3 := 0;
 1 +   := q + ;
 2 +   := 1 + q + ;
 3 +   := 2 + q + ;
+
 1 + 2:
 2 + 3:
 2 + 1:
 
-O + := ;
+1 + 1 + 1 + 1:
+1 + q + 1:
+
+O +    := ;
 SO - S := O - ;
-O - O := O;
+O - O  := O;
 
 SSO + SSSO:
 SSO - SO:
 SSO - SSSO:
 
 FORMAL_LANG
+/*
+
+
+
+
+*/
 	tokens: [..]u8; /* this is the backing character 'arena' */
 	statements: [..]Statement;
 	queries: [..]Expression;
@@ -90,17 +105,60 @@ FORMAL_LANG
 	}
 	print("---------------------\n");
 
+	solutions: [..]Solution;
 	for query: queries {
-		for statement: statements {
-			width := statement.arg.count;
-			if width <= query.count for l: 0..(query.count-width) {
-				subex := Expression.{query.offset + l, width};
-				if cmp(tokens, statement.arg, subex) print("% ", to_string(tokens, subex));
+		array_add(*solutions, .{.NEW, query});
+		keep_solving := true;
+		while keep_solving {
+			count_before := solutions.count;
+			keep_solving = false;
+			for 0..count_before-1 if solutions[it].state == .NEW {
+				keep_solving = true;
+
+				produced_results := eval_step(statements, *tokens, solutions[it].expression, *solutions);
+				if produced_results solutions[it].state = .ANALYZED;
+				else solutions[it].state = .SOLVED;
+
+				// for solutions print("% ", to_string(tokens, it.expression));
+				// print("\n");
 			}
 		}
+		for solutions if it.state == .SOLVED print("%, state: %\n", to_string(tokens, it.expression), it.state);
+		print("\n");
+		array_reset(*solutions);
 		print("\n");
 	}
 
+}
+
+eval_step :: (statements: []Statement, arena: *[..]u8, query: Expression, solutions: *[..]Solution) -> bool {
+	something_found := false;
+	for statement: statements {
+		width := statement.arg.count;
+		if width <= query.count for l: 0..(query.count-width) {
+			subex := Expression.{query.offset + l, width};
+			if cmp(arena.*, statement.arg, subex) {
+				before := Expression.{query.offset, l};
+				after := Expression.{query.offset + l + width, max(0, query.count - (l+width))};
+
+				start_of_result := arena.count;
+				array_add(arena, ..to_array(arena.*, before));
+				array_add(arena, ..to_array(arena.*, statement.res));
+				array_add(arena, ..to_array(arena.*, after));
+
+				result := Solution.{.NEW, Expression.{start_of_result, arena.count-start_of_result}};
+				exist := false;
+				something_found = true;
+				for solutions.* if cmp(arena.*, it.expression, result.expression) {
+					exist = true;
+					break;
+				}
+				if !exist array_add(solutions, result);
+				else arena.count -= result.expression.count;
+			}
+		}
+	}
+	return something_found;
 }
 
 cmp :: (arena: []u8, e1: Expression, e2: Expression) -> bool {
@@ -114,6 +172,13 @@ to_string :: inline (arena: []u8, expression: Expression) -> string {
 	s.data = arena.data + expression.offset;
 	s.count = expression.count;
 	return s;
+}
+
+to_array :: inline (arena: []u8, expression: Expression) -> []u8 {
+	a: []u8;
+	a.data = arena.data + expression.offset;
+	a.count = expression.count;
+	return a;
 }
 
 cas :: inline (char: *u8) -> string {
