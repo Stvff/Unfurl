@@ -88,23 +88,6 @@ FORMAL_LANG
 	for queries print("%:\n", to_string(tokens, it));
 	print("---------------------\n");
 
-	for query: queries {
-		for stage: 1..query.count {
-			width := query.count - stage;
-			for l: 0..width {
-				//print("[% %]", l, stage);
-				subex := Expression.{query.offset + l, stage};
-				print("% ", to_string(tokens, subex));
-				for statements {
-					if cmp(tokens, it.arg, subex) print("T ");
-				}
-			}
-			print("\n");
-		}
-		print("\n");
-	}
-	print("---------------------\n");
-
 	solutions: [..]Solution;
 	for query: queries {
 		array_add(*solutions, .{.NEW, query});
@@ -142,6 +125,8 @@ eval_step :: (statements: []Statement, arena: *[..]u8, query: Expression, soluti
 				after := Expression.{query.offset + l + width, max(0, query.count - (l+width))};
 
 				start_of_result := arena.count;
+				/* this can probably be sped up with an array resize and three copies) */
+				array_reserve(arena, arena.count + before.count + statement.res.count + after.count);
 				array_add(arena, ..to_array(arena.*, before));
 				array_add(arena, ..to_array(arena.*, statement.res));
 				array_add(arena, ..to_array(arena.*, after));
@@ -153,6 +138,7 @@ eval_step :: (statements: []Statement, arena: *[..]u8, query: Expression, soluti
 					exist = true;
 					break;
 				}
+//				print("%, %: %, %\n", to_string(arena.*, query), to_string(arena.*, statement.arg), to_string(arena.*, statement.res), to_string(arena.*, result.expression));
 				if !exist array_add(solutions, result);
 				else arena.count -= result.expression.count;
 			}
@@ -189,3 +175,4 @@ cas :: inline (char: *u8) -> string {
 }
 
 #import "Basic";
+#import "Memory";
