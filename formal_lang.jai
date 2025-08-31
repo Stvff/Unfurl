@@ -78,14 +78,35 @@ FORMAL_LANG
 			width := query.count - stage;
 			for l: 0..width {
 				//print("[% %]", l, stage);
-				print("% ", to_string(tokens, Expression.{query.offset + l, stage}));
+				subex := Expression.{query.offset + l, stage};
+				print("% ", to_string(tokens, subex));
+				for statements {
+					if cmp(tokens, it.arg, subex) print("T ");
+				}
 			}
 			print("\n");
 		}
 		print("\n");
 	}
+	print("---------------------\n");
 
-//	print("%\n", statements);
+	for query: queries {
+		for statement: statements {
+			width := statement.arg.count;
+			if width <= query.count for l: 0..(query.count-width) {
+				subex := Expression.{query.offset + l, width};
+				if cmp(tokens, statement.arg, subex) print("% ", to_string(tokens, subex));
+			}
+		}
+		print("\n");
+	}
+
+}
+
+cmp :: (arena: []u8, e1: Expression, e2: Expression) -> bool {
+	s1 := to_string(arena, e1);
+	s2 := to_string(arena, e2);
+	return s1 == s2;
 }
 
 to_string :: inline (arena: []u8, expression: Expression) -> string {
@@ -95,7 +116,7 @@ to_string :: inline (arena: []u8, expression: Expression) -> string {
 	return s;
 }
 
-cas :: (char: *u8) -> string {
+cas :: inline (char: *u8) -> string {
 	s: string;
 	s.data = char;
 	s.count = 1;
