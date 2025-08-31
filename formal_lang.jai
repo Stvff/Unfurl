@@ -30,8 +30,17 @@ main :: () {
 	{/* first grouping */
 		current_statement: Statement;
 		on_res, skip_equals := false;
+		in_comment := 0;
 		for code if it > " " {
+			if in_comment > 0 {
+				if it == {
+				case "("; in_comment += 1;
+				case ")"; in_comment -= 1;
+				}
+				continue;
+			}
 			if it == {
+			case "("; in_comment += 1;
 			case ":";
 				if it_index < code.count-2 && code[it_index+1] == "=" {
 					skip_equals = true;
@@ -45,7 +54,7 @@ main :: () {
 					current_statement.arg.count = 0;
 				}
 			case ";";
-				array_add(*statements, current_statement);
+				if current_statement.arg.count array_add(*statements, current_statement);
 				on_res = false;
 				current_statement.arg.offset = tokens.count;
 				current_statement.arg.count = 0;
