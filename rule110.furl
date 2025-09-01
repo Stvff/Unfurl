@@ -22,7 +22,18 @@
 	The tape itself consists of "_" for an empty spot, and "#" for a filled-in space.
 	Finally, the tape is terminated with "_>". Where that final "_" is not optional.
 
-	The given example takes around 0.88s to run on my (unplugged) laptop.
+	This example runs on a limited tape, but with a simple modification, it can grow its
+	tape automatically. I just kept it limited for the easthetics.
+	To give it automatically extending tape length, replace
+	<# := >%;
+	with
+	<# := >%%;
+
+	To make the intermediate printer print all states of this, replace
+	<_ := ^_;
+	with
+	<# := ^#;
+	and remove all leading "_" in the query.
 )
 
 (first we encode left to right)
@@ -66,6 +77,8 @@ W# := ##;
 |^ := ^;
 
 |<<<<<<<<<<<<<<<<<<<<<<<<<<<<<_____________________________#_>:
+
+(|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<__________________________________________#_>:)
 
 (
 	(Some tests for edge cases)
