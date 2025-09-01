@@ -1,31 +1,45 @@
 # Unfurl Explanation
 Unfurl is really nothing more than an elaborate substitution machine.
 You input rules:
-```a := b;```
+```
+a := b;
+```
 And queries:
-```bbb:```
+```
+bbb:
+```
 And the evaluator applies the rule to the queries:
-```aaa```
+```
+aaa
+```
 
 Interestingly enough, there is an enormous wealth of complexity that can be extracted
 from this simple paradigm.\
 For example, some rules and inputs have multiple different combinations. The evaluator
 always evaluates every single possible combination.\
 As an example:
-```aa := b;
-aaa:```
+```
+aa := b;
+aaa:
+```
 Has two possible solutions:
-```ba
-ab```
+```
+ba
+ab
+```
 A more elaborate example:
-```aa := u;
+```
+aa := u;
 aa := v;
-aaa:```
+aaa:
+```
 Results in four possible solutions:
-```ua
+```
+ua
 au
 va
-av```
+av
+```
 
 The evaluation continues applying rules until no more rules can be applied. This has
 two implications:
@@ -33,17 +47,23 @@ two implications:
 2) The rules are applied to 'intermediate' results. This is where most of the real
 useful complexity of Unfurl comes from.\
 As a basic example:
-```N0 := 1;
+```
+N0 := 1;
 N1 := 2;
 N2 := 3;
-NN0:```
+NN0:
+```
 Results in:
-```3```
+```
+3
+```
 When running the evaluator with -all-states, you can see all the intermediate steps.
-```NNN0, state: ANALYZED
+```
+NNN0, state: ANALYZED
 NN1, state: ANALYZED
 N2, state: ANALYZED
-3, state: SOLVED```
+3, state: SOLVED
+```
 
 ## Writing .furl files (aka my parser is not so smart so don't shake it too much it'll throw up)
 The only valid input is ascii.\
