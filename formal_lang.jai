@@ -1,3 +1,23 @@
+help_message :: #string END_STRING
+This is the formal-lang evaluator.
+Usage:
+    $ formal_lang [options] <files/ending/in.fl>;
+
+Possible options:
+    -all-states
+        Makes the evaluator print out all explored intermediate states.
+
+    -only-solutions
+        Reduces the output so that it does not print the given rules,
+        queries, or any stats.
+
+    -explain
+        Prints an explanation of the formal-lang (and its evaluator).
+
+For any problems or questions, visit the github, or stvff@gmail.com.
+
+END_STRING
+
 Expression :: struct {
 	offset: int; /* offset into a token arena */
 	count: int;
@@ -14,10 +34,30 @@ Solution :: struct {
 }
 
 main :: () {
+	print_all_intermediate_states := false;
+	quiet_down := false;
+
 	os_args := get_command_line_arguments();
 	os_args.data += 1; os_args.count -= 1;
 	code: [..]u8;
-	for os_args {
+	if !os_args {
+		print("%", help_message);
+		return;
+	} else for os_args {
+		if it[0] == "-" {
+			arg := it;
+			arg.data += 1; arg.count -= 1;
+			if arg == "all-states" print_all_intermediate_states = true;
+			else if arg == "only-solutions" quiet_down = true;
+			else if arg == "explain" {
+				print("%", explanation_message);
+				return;
+			} else {
+				print("%", help_message);
+				return;
+			}
+			continue;
+		}
 		file, ok := read_entire_file(it);
 		if !ok return;
 		array_add(*code, .. cast([]u8, file));
@@ -69,9 +109,12 @@ main :: () {
 			}
 		}
 	}
-	for statements print("% := %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
-//	for queries print("%:\n", to_string(tokens, it));
-	print("---------------------\n");
+
+	if !quiet_down {
+		print("---------------- Given Rules ----------------\n");
+		for statements print("% := %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
+		print("------------ Queries and results ------------\n");
+	}
 
 	solutions: [..]Solution;
 	for query: queries {
@@ -86,15 +129,13 @@ main :: () {
 				produced_results := eval_step(statements, *tokens, solutions[it].expression, *solutions);
 				if produced_results solutions[it].state = .ANALYZED;
 				else solutions[it].state = .SOLVED;
-
-				// for solutions print("% ", to_string(tokens, it.expression));
-				// print("\n");
 			}
 		}
 
-		print("%: % comparisons, solutions:\n", to_string(tokens, query), cmp_counter);
+		if !quiet_down print("%: % comparisons, % explored states, solutions:\n", to_string(tokens, query), cmp_counter, solutions.count);
 		cmp_counter = 0;
-		for solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
+		if print_all_intermediate_states for solutions print("%, state: %\n", to_string(tokens, it.expression), it.state);
+		else for solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
 		array_reset(*solutions);
 		print("\n");
 	}
@@ -165,3 +206,65 @@ cas :: inline (char: *u8) -> string {
 
 #import "Basic";
 #import "File";
+
+explanation_message :: #string MARKDOWN
+# Explanation
+  The formal-lang is really nothing more than an elaborate substitution machine.
+  You input rules:
+      a := b;
+  And queries:
+      bbb:
+  And the evaluator applies the rule to the queries:
+      aaa
+
+  Interestingly enough, there is an enormous wealth of complexity that can be extracted
+  from this simple paradigm.
+  For example, some rules and inputs have multiple different combinations. The evaluator
+  always evaluates every single possible combination.
+  As an example:
+      aa := b;
+      aaa:
+  Has two possible solutions:
+      ba
+      ab
+  A more elaborate example:
+      aa := u;
+      aa := v;
+      aaa:
+  Results in four possible solutions:
+      ua
+      au
+      va
+      av
+
+  The evaluation continues applying rules until no more rules can be applied. This has
+  two implications:
+  1) Infinite evaluation is possible (for example (n := nn; n:))
+  2) The rules are applied to 'intermediate' results. This is where most of the real
+   useful complexity of the formal-lang comes from.
+  As a basic example:
+      N0 := 1;
+      N1 := 2;
+      N2 := 3;
+      NN0:
+  Results in:
+      3
+  When running the evaluator with -all-states, you can see all the intermediate steps.
+      NNN0, state: ANALYZED
+      NN1, state: ANALYZED
+      N2, state: ANALYZED
+      3, state: SOLVED
+
+## Writing .fl files (aka my parser is not so smart so don't shake it too much it'll throw up)
+  The only valid input is ascii.
+  All whitespace is ignored and removed (so spaces will not show up in rules, queries, or solutions).
+  Comments can be placed between parentheses (like so (also they can nest)).
+  When calling the evaluator on multiple files at once, all their rules and queries are combined into
+  one larger evaluation pool.
+
+## What is this good for?
+  I wanted to make a really simple language that I could practice non-trivial multithreading on.
+  Formal-lang is actually turing complete as well, so at some point I want to make a 'program searcher'
+  for it, which is a type of symbolic artificial intelligence.
+
+MARKDOWN

@@ -1,58 +1,85 @@
+(
+	This is a rule 110 implementation, proving that this language is turing complete.
+	It essentially forces the evaluator to go through the list from left to right, then
+	from right to left, then back again, and then finally a right to left 'reset' pass,
+
+	It needs to do so many loops because it cannot otherwise distinguish the current
+	state of evalution.
+
+	'Essentially forces the evaluator' means that these rules are made in such a way
+	that there is always exactly 1 valid next solution for any given state.
+	Indeed, it is quite directly simulating a turing machine, except where a turing machine
+	maintains internal state, this needs to save all the space on the tape.
+
+	For the case of presenting intermediate solutions, it abuses the overloading of "<_"
+	Which can evaluate either to ">-", which continues evaluation, or "^_", which completely
+	halts evaluation. (It also does some cleanup, but that's entirely easthetics).
+
+	The input format is as follows:
+	It starts with a "|". This is for easthetics in the representation, and is optional.
+	Then, there is any number of "<". This amount dictates how many iterations it should
+	evaluate.
+	The tape itself consists of "_" for an empty spot, and "#" for a filled-in space.
+	Finally, the tape is terminated with "_>". Where that final "_" is not optional.
+
+	The given example takes around 0.88s to run on my (unplugged) laptop.
+)
+
 (first we encode left to right)
 <_ := >-;
 <# := >%;
 -_ := --;
-q_ := %-;
+._ := %-;
 %_ := %-;
 -# := %%;
-%# := %q;
-q# := qq;
+%# := %.;
+.# := ..;
 
 (when we've reached the end, we encode right to left)
 -> := `<;
-q> := `<;
+.> := `<;
 %` := @`;
 -` := ``;
-q` := ``;
+.` := ``;
 %@ := @@;
 -@ := `@;
-q@ := `@;
+.@ := `@;
 
 (We go to a different state again)
->` := 0;
->@ := 1;
-0` := 00;
-1` := 10;
-0@ := 01;
-1@ := 11;
+>` := ~;
+>@ := W;
+~` := ~~;
+W` := W~;
+~@ := ~W;
+W@ := WW;
 
 (Hopefully the final pass)
-0< := _>;
-0_ := __;
-1_ := #_;
-0# := _#;
-1# := ##;
+~< := _>;
+~_ := __;
+W_ := #_;
+~# := _#;
+W# := ##;
 
-<______#_>:
-<<______#_>:
-<<<______#_>:
-<<<<______#_>:
-<<<<<______#_>:
-<<<<<<______#_>:
+(Show all intermediate solutions too)
+<_ := ^_;
+<^ := ^;
+|^ := ^;
+
+|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<_____________________________#_>:
 
 (
-(Some tests for edge cases)
-<______#_>:
-<_____##_>:
-<____###_>:
-<___##_#_>:
-<__#####_>:
-<__#___#_>:
-<__######____>:
-<__#######_>:
-<__###_#_>:
-<__#####_#_>:
-<__#####_###_>:
-<_#_#_#_#_>:
-<#########>:
+	(Some tests for edge cases)
+	<______#_>:
+	<_____##_>:
+	<____###_>:
+	<___##_#_>:
+	<__#####_>:
+	<__#___#_>:
+	<__######____>:
+	<__#######_>:
+	<__###_#_>:
+	<__#####_#_>:
+	<__#####_###_>:
+	<_#_#_#_#_>:
+	<#########>:
 )

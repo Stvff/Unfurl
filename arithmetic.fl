@@ -1,3 +1,4 @@
+(These are the rules for a simple modular arithmetic on base 4)
 q + 0 := 1;
 q + 1 := 2;
 q + 2 := 3;
@@ -10,10 +11,9 @@ q + 3 := 0;
 1 + 2:
 2 + 3:
 2 + 1:
-
 1 + 1 + 1 + 1:
-1 + q + 1:
 
+(This is the classic peano arithmetic successor function situation)
 O +    := ;
 SO - S := O - ;
 O - O  := O;
@@ -22,4 +22,5 @@ SSO + SSSO:
 SSO - SO:
 SSO - SSSO:
 
+(Here's an example with ambiguous precedence, which causes it to have two valid solutions)
 SSO + SSSO - SO - SSSO:
