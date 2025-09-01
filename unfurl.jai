@@ -1,7 +1,7 @@
 help_message :: #string END_STRING
-This is the formal-lang evaluator.
+This is the Unfurl evaluator.
 Usage:
-    $ formal_lang [options] <files/ending/in.fl>;
+    $ unfurl [options] <files/ending/in.furl>;
 
 Possible options:
     -all-states
@@ -12,7 +12,7 @@ Possible options:
         queries, or any stats.
 
     -explain
-        Prints an explanation of the formal-lang (and its evaluator).
+        Prints an explanation of Unfurl (and its evaluator).
 
 For any problems or questions, visit the github, or stvff@gmail.com.
 
@@ -209,7 +209,7 @@ cas :: inline (char: *u8) -> string {
 
 explanation_message :: #string MARKDOWN
 # Explanation
-  The formal-lang is really nothing more than an elaborate substitution machine.
+  Unfurl is really nothing more than an elaborate substitution machine.
   You input rules:
       a := b;
   And queries:
@@ -241,7 +241,7 @@ explanation_message :: #string MARKDOWN
   two implications:
   1) Infinite evaluation is possible (for example (n := nn; n:))
   2) The rules are applied to 'intermediate' results. This is where most of the real
-   useful complexity of the formal-lang comes from.
+   useful complexity of Unfurl comes from.
   As a basic example:
       N0 := 1;
       N1 := 2;
@@ -255,7 +255,7 @@ explanation_message :: #string MARKDOWN
       N2, state: ANALYZED
       3, state: SOLVED
 
-## Writing .fl files (aka my parser is not so smart so don't shake it too much it'll throw up)
+## Writing .furl files (aka my parser is not so smart so don't shake it too much it'll throw up)
   The only valid input is ascii.
   All whitespace is ignored and removed (so spaces will not show up in rules, queries, or solutions).
   Comments can be placed between parentheses (like so (also they can nest)).
@@ -264,7 +264,7 @@ explanation_message :: #string MARKDOWN
 
 ## What is this good for?
   I wanted to make a really simple language that I could practice non-trivial multithreading on.
-  Formal-lang is actually turing complete as well, so at some point I want to make a 'program searcher'
+  Unfurl is actually turing complete as well, so at some point I want to make a 'program searcher'
   for it, which is a type of symbolic artificial intelligence.
 
 MARKDOWN
