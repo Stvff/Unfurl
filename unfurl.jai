@@ -14,7 +14,8 @@ Possible options:
     -explain
         Prints an explanation of Unfurl (and its evaluator).
 
-For any problems or questions, visit the github, or stvff@gmail.com.
+For any problems or questions, visit the github (https://github.com/Stvff/Unfurl)
+or vstvff@gmail.com.
 
 END_STRING
 
