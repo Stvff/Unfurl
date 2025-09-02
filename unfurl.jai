@@ -39,6 +39,7 @@ main :: () {
 	quiet_down := false;
 
 	os_args := get_command_line_arguments();
+	// os_args: []string = .["unfurl", "rule110.furl"];
 	os_args.data += 1; os_args.count -= 1;
 	code: [..]u8;
 	if !os_args {
@@ -127,7 +128,13 @@ main :: () {
 			for 0..count_before-1 if solutions[it].state == .NEW {
 				keep_solving = true;
 
-				produced_results := eval_step(statements, *tokens, solutions[it].expression, *solutions);
+				/* This is a seperate definition, because if you put it as function argument,
+				   it never dereferences it from the solutions array, and keeps it as a pointer,
+				   which is eventually invalidated by the solutions array re-allocating.
+				   I don't know if this is an intended effect of read-only function arguments,
+				   but it comes across as a codegen bug to me. It happens in bytecode, x64 and llvm. */
+				expression_to_eval := solutions[it].expression;
+				produced_results := eval_step(statements, *tokens, expression_to_eval, *solutions);
 				if produced_results solutions[it].state = .ANALYZED;
 				else solutions[it].state = .SOLVED;
 			}

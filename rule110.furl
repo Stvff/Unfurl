@@ -21,24 +21,13 @@
 	evaluate.
 	The tape itself consists of "_" for an empty spot, and "#" for a filled-in space.
 	Finally, the tape is terminated with "_>". Where that final "_" is not optional.
-
-	This example runs on a limited tape, but with a simple modification, it can grow its
-	tape automatically. I just kept it limited for the easthetics.
-	To give it automatically extending tape length, replace
-	<# := >%;
-	with
-	<# := >%%;
-
-	To make the intermediate printer print all states of this, replace
-	<_ := ^_;
-	with
-	<# := ^#;
-	and remove all leading "_" in the query.
+	The tape will automatically grow, and my advice is to not place any leading "_", as
+	it will make the output less pretty.
 )
 
 (first we encode left to right)
 <_ := >-;
-<# := >%;
+<# := >%%;
 -_ := --;
 ._ := %-;
 %_ := %-;
@@ -73,12 +62,11 @@ W# := ##;
 
 (Show all intermediate solutions too)
 <_ := ^_;
-<^ := ^;
-|^ := ^;
+<# := ^#;
+<^_ := ^_;
 
-|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<_____________________________#_>:
 
-(|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<__________________________________________#_>:)
+|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<#_>:
 
 (
 	(Some tests for edge cases)
@@ -95,4 +83,7 @@ W# := ##;
 	<__#####_###_>:
 	<_#_#_#_#_>:
 	<#########>:
+
+	|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<_____________________________#_>:
+	|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<_______________________________________________#_>:
 )
