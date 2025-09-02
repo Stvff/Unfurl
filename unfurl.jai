@@ -142,8 +142,10 @@ main :: () {
 
 		if !quiet_down print("%: % comparisons, % explored states, solutions:\n", to_string(tokens, query), cmp_counter, solutions.count);
 		cmp_counter = 0;
-		if print_all_intermediate_states for solutions print("%, state: %\n", to_string(tokens, it.expression), it.state);
-		else for solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
+		if print_all_intermediate_states
+			for solutions print("%, state: %\n", to_string(tokens, it.expression), it.state);
+		else
+			for solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
 		array_reset(*solutions);
 		print("\n");
 	}
@@ -151,8 +153,32 @@ main :: () {
 	if !quiet_down && problems.count {
 		print("-------------- Given Problems ---------------\n");
 		for problems print("% :: %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
+		print("---------------- Time to try ----------------\n");
 	}
-	for problems
+
+	problem_solutions: [..]Solution;
+	for problem: problems {
+		solve(statements, *tokens, problem.arg, *problem_solutions);
+
+		amount_solved := 0;
+		index_of_solution := 0;
+		for problem_solutions {
+			if it.state == .SOLVED {
+				amount_solved += 1;
+				index_of_solution = it_index;
+			}
+		}
+		if amount_solved != 1 {
+			print("Could not solve the problem with the given rules, TOO MUCH\n");
+		} else if !cmp(tokens, problem.res, problem_solutions[index_of_solution].expression) {
+			print("Could not solve the problem with the given rules, WRONG\n");
+		} else {
+			print("Solved:\n% :: %;\n", to_string(tokens, problem.arg), to_string(tokens, problem.res));
+		}
+
+		array_reset(*problem_solutions);
+		print("\n");
+	}
 
 }
 

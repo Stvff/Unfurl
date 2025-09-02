@@ -1,11 +1,26 @@
 (
-	the ruleset that I want out of this is
-n q:
+	the ruleset that I want out of this is:
+	a := c;
+	b := d;
+
+	It should go through all the problems, collect all the
+	values it sees as the arg, and collect all the values
+	it sees as the res.
+	(Also, it should take multiple res for the same arg into account)
+	Then, it should start enumerating rules of the arg-set to the res-set.
+	Existing rules should also be considered.
+
+	The order should be from multiple small rules, to less large rules.
+	The length of an enumerated rule arg naturally should not exceed the
+	max length of the problem args. The smallest rule arg should similarly not be
+	smaller than the smallest problem arg.
+
+	At some point, intermediate values have to be generated, especially when
+	the problem-arg-set overlaps with the problem-res-set.
 )
-
-a := c;
-b := d;
-a b :: c d;
-
 n := m;
 q := p;
+
+a b :: c d;
+aabb :: ccdd;
+abbbaababa :: cdddccdcdc;
