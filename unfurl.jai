@@ -41,7 +41,9 @@ main :: () {
 	os_args := get_command_line_arguments();
 	// os_args: []string = .["unfurl", "rule110.furl"];
 	os_args.data += 1; os_args.count -= 1;
-	code: [..]u8;
+	ascii_files, nfurl_files, xfurl_files: [..]u8;
+	nfurl_query_files: [..]u8;
+	xfurl_query_files: [..]u64;
 	if !os_args {
 		print("%", help_message);
 		return;
@@ -62,7 +64,7 @@ main :: () {
 		}
 		file, ok := read_entire_file(it);
 		if !ok return;
-		array_add(*code, .. cast([]u8, file));
+		array_add(*ascii_files, .. cast([]u8, file));
 	}
 
 	tokens: [..]u8; /* this is the backing character 'arena' */
@@ -73,7 +75,7 @@ main :: () {
 		current_statement: Statement;
 		on_res, skip_equals := false;
 		in_comment := 0;
-		for code if it > " " {
+		for ascii_files if it > " " {
 			if in_comment > 0 {
 				if it == {
 				case "("; in_comment += 1;
@@ -84,7 +86,7 @@ main :: () {
 			if it == {
 			case "("; in_comment += 1;
 			case ":";
-				if it_index < code.count-2 && code[it_index+1] == "=" {
+				if it_index < ascii_files.count-2 && ascii_files[it_index+1] == "=" {
 					skip_equals = true;
 					on_res = true;
 					current_statement.res.offset = tokens.count;

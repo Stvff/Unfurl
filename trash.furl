@@ -5,3 +5,24 @@ _## := %%%;
 #__ := %__;
 #_# := %%%;
 ### := %_%;
+
+(
+	3230420 244903094 4340990 := 32;
+
+	SSO + SSSO == SSSSSO;
+	SSO + SSSO :: SSSSSO;
+	0 + SS0 =: SS0;
+
+	nfurl would operate on bytes like normal furl, but they are inputted
+	as numbers, instead of as strings. The restriction of non-whitespace ascii
+	would no longer apply.
+
+	xfurl would operate on 64-bit number ID's, and it would be
+	the one to use for serious pure computation.
+
+	Bot nfurl and xfurl would have a few extra syntactic sugar operators:
+	name = value;
+	query/file/path.q: (only for nfurl, loaded as []u8)
+	query/file/path.xq: (only for xfurl, loaded as []64)
+	The last two load a file as the query, with no parsing. Can also be loaded from the cli.
+)
