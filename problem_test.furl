@@ -1,0 +1,11 @@
+(
+	the ruleset that I want out of this is
+n q:
+)
+
+a := c;
+b := d;
+a b :: c d;
+
+n := m;
+q := p;

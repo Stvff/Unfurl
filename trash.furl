@@ -22,7 +22,8 @@ _## := %%%;
 
 	Bot nfurl and xfurl would have a few extra syntactic sugar operators:
 	name = value;
-	query/file/path.q: (only for nfurl, loaded as []u8)
+	query/file/path.nq: (only for nfurl, loaded as []u8)
 	query/file/path.xq: (only for xfurl, loaded as []64)
-	The last two load a file as the query, with no parsing. Can also be loaded from the cli.
+	The last two load a file as the query, with no parsing. Can also be loaded from the CLI.
+	Finally, .q would be loaded for ascii unfurl, and only from the CLI.
 )

@@ -42,8 +42,10 @@ main :: () {
 	// os_args: []string = .["unfurl", "rule110.furl"];
 	os_args.data += 1; os_args.count -= 1;
 	ascii_files, nfurl_files, xfurl_files: [..]u8;
+	ascii_query_files: [..]u8;
 	nfurl_query_files: [..]u8;
 	xfurl_query_files: [..]u64;
+
 	if !os_args {
 		print("%", help_message);
 		return;
@@ -70,10 +72,11 @@ main :: () {
 	tokens: [..]u8; /* this is the backing character 'arena' */
 	statements: [..]Statement;
 	queries: [..]Expression;
+	problems: [..]Statement;
 
-	{/* first grouping */
+	{/* parsing ascii unfurl */
 		current_statement: Statement;
-		on_res, skip_equals := false;
+		on_res, on_problem, skip_colon, skip_equals := false;
 		in_comment := 0;
 		for ascii_files if it > " " {
 			if in_comment > 0 {
@@ -86,27 +89,40 @@ main :: () {
 			if it == {
 			case "("; in_comment += 1;
 			case ":";
-				if it_index < ascii_files.count-2 && ascii_files[it_index+1] == "=" {
+				if skip_colon { skip_colon = false; continue; }
+
+				next_char := cast(u8) 0;
+				if it_index < ascii_files.count-2 next_char = ascii_files[it_index+1];
+				if next_char == {
+				case ":";
+					skip_colon = true;
+					on_res = true;
+					on_problem = true;
+					current_statement.res.offset = tokens.count;
+					current_statement.res.count = 0;
+				case "=";
 					skip_equals = true;
 					on_res = true;
 					current_statement.res.offset = tokens.count;
 					current_statement.res.count = 0;
-				} else {
+				case;
 					array_add(*queries, current_statement.arg);
 					on_res = false;
 					current_statement.arg.offset = tokens.count;
 					current_statement.arg.count = 0;
 				}
 			case ";";
-				if current_statement.arg.count array_add(*statements, current_statement);
+				if current_statement.arg.count {
+					if on_problem array_add(*problems, current_statement);
+					else array_add(*statements, current_statement);
+				}
 				on_res = false;
+				on_problem = false;
 				current_statement.arg.offset = tokens.count;
 				current_statement.arg.count = 0;
 			case;
-				if skip_equals {
-					skip_equals = false;
-					continue;
-				}
+				if skip_equals { skip_equals = false; continue; }
+
 				array_add(*tokens, it);
 				if on_res current_statement.res.count += 1;
 				else current_statement.arg.count += 1;
@@ -115,32 +131,14 @@ main :: () {
 	}
 
 	if !quiet_down {
-		print("---------------- Given Rules ----------------\n");
+		if statements.count print("---------------- Given Rules ----------------\n");
 		for statements print("% := %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
-		print("------------ Queries and results ------------\n");
+		if queries.count print("------------ Queries and Results ------------\n");
 	}
 
 	solutions: [..]Solution;
 	for query: queries {
-		array_add(*solutions, .{.NEW, query});
-		keep_solving := true;
-		while keep_solving {
-			count_before := solutions.count;
-			keep_solving = false;
-			for 0..count_before-1 if solutions[it].state == .NEW {
-				keep_solving = true;
-
-				/* This is a seperate definition, because if you put it as function argument,
-				   it never dereferences it from the solutions array, and keeps it as a pointer,
-				   which is eventually invalidated by the solutions array re-allocating.
-				   I don't know if this is an intended effect of read-only function arguments,
-				   but it comes across as a codegen bug to me. It happens in bytecode, x64 and llvm. */
-				expression_to_eval := solutions[it].expression;
-				produced_results := eval_step(statements, *tokens, expression_to_eval, *solutions);
-				if produced_results solutions[it].state = .ANALYZED;
-				else solutions[it].state = .SOLVED;
-			}
-		}
+		solve(statements, *tokens, query, *solutions);
 
 		if !quiet_down print("%: % comparisons, % explored states, solutions:\n", to_string(tokens, query), cmp_counter, solutions.count);
 		cmp_counter = 0;
@@ -148,6 +146,35 @@ main :: () {
 		else for solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
 		array_reset(*solutions);
 		print("\n");
+	}
+
+	if !quiet_down && problems.count {
+		print("-------------- Given Problems ---------------\n");
+		for problems print("% :: %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
+	}
+	for problems
+
+}
+
+solve :: (statements: []Statement, arena: *[..]u8, query: Expression, solutions: *[..]Solution) {
+	array_add(solutions, .{.NEW, query});
+	keep_solving := true;
+	while keep_solving {
+		count_before := solutions.count;
+		keep_solving = false;
+		for 0..count_before-1 if solutions.*[it].state == .NEW {
+			keep_solving = true;
+
+			/* This is a seperate definition, because if you put it as function argument,
+			   it never dereferences it from the solutions array, and keeps it as a pointer,
+			   which is eventually invalidated by the solutions array re-allocating.
+			   I don't know if this is an intended effect of read-only function arguments,
+			   but it comes across as a codegen bug to me. It happens in bytecode, x64 and llvm. */
+			expression_to_eval := solutions.*[it].expression;
+			produced_results := eval_step(statements, arena, expression_to_eval, solutions);
+			if produced_results solutions.*[it].state = .ANALYZED;
+			else solutions.*[it].state = .SOLVED;
+		}
 	}
 }
 
