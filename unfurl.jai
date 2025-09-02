@@ -215,13 +215,23 @@ eval_step :: (statements: []Statement, arena: *[..]u8, query: Expression, soluti
 				after := Expression.{query.offset + l + width, max(0, query.count - (l+width))};
 
 				start_of_result := arena.count;
-				/* this can probably be sped up with an array resize and three copies) */
-				array_reserve(arena, arena.count + before.count + statement.res.count + after.count);
-				array_add(arena, ..to_array(arena.*, before));
-				array_add(arena, ..to_array(arena.*, statement.res));
-				array_add(arena, ..to_array(arena.*, after));
+				result_length := before.count + statement.res.count + after.count;
 
-				result := Solution.{.NEW, Expression.{start_of_result, arena.count-start_of_result}};
+				/* I basically inlined what I had before, I'm not convinced it's better at all, but it's something */
+				new_length := start_of_result + result_length;
+				if new_length > arena.allocated {
+					reserve := new_length*2;
+					array_reserve(arena, reserve);
+				}
+				arena.count = new_length;
+				p := arena.data + start_of_result;
+				memcpy(p, arena.data + before.offset, before.count);
+				p += before.count;
+				memcpy(p, arena.data + statement.res.offset, statement.res.count);
+				p += statement.res.count;
+				memcpy(p, arena.data + after.offset, after.count);
+
+				result := Solution.{.NEW, Expression.{start_of_result, result_length}};
 				exist := false;
 				something_found = true;
 				for solutions.* if cmp(arena.*, it.expression, result.expression) {
@@ -230,7 +240,7 @@ eval_step :: (statements: []Statement, arena: *[..]u8, query: Expression, soluti
 				}
 //				print("%, %: %, %\n", to_string(arena.*, query), to_string(arena.*, statement.arg), to_string(arena.*, statement.res), to_string(arena.*, result.expression));
 				if !exist array_add(solutions, result);
-				else arena.count -= result.expression.count;
+				else arena.count = start_of_result;
 			}
 		}
 	}
@@ -309,7 +319,7 @@ explanation_message :: #string MARKDOWN
       N0 := 1;
       N1 := 2;
       N2 := 3;
-      NN0:
+      NNN0:
   Results in:
       3
   When running the evaluator with -all-states, you can see all the intermediate steps.

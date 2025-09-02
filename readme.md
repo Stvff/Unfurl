@@ -51,7 +51,7 @@ As a basic example:
 N0 := 1;
 N1 := 2;
 N2 := 3;
-NN0:
+NNN0:
 ```
 Results in:
 ```
