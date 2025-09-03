@@ -19,14 +19,21 @@ or vstvff@gmail.com.
 
 END_STRING
 
-Expression :: struct {
-	offset: int; /* offset into a token arena */
+View :: struct(T: Type) {
+	offset: int; /* Offset into an arena specifically */
 	count: int;
 }
+
+Expression :: View(u8);
 
 Statement :: struct {
 	arg: Expression;
 	res: Expression;
+}
+
+Res_Set :: struct {
+	arg: Expression;
+	sols: [..]Expression;
 }
 
 Solution :: struct {
@@ -72,10 +79,14 @@ main :: () {
 	tokens: [..]u8; /* this is the backing character 'arena' */
 	statements: [..]Statement;
 	queries: [..]Expression;
-	problems: [..]Statement;
+
+	problems: [..]Res_Set;
 
 	{/* parsing ascii unfurl */
-		current_statement: Statement;
+		problem_index: int;
+		normal_statement_dropin, problem_statement_dropin: Statement;
+		current_statement: *Statement = *normal_statement_dropin;
+
 		on_res, on_problem, skip_colon, skip_equals := false;
 		in_comment := 0;
 		for ascii_files if it > " " {
@@ -98,6 +109,20 @@ main :: () {
 					skip_colon = true;
 					on_res = true;
 					on_problem = true;
+					problem_index = -1;
+					for problem: problems if cmp(tokens, problem.arg, current_statement.arg) {
+						tokens.count -= current_statement.arg.count;
+						problem_index = it_index;
+						break problem;
+					}
+					if problem_index == -1 {
+						/* this doesn't compile, and the error message might be a bug? */
+						// array_add(*problems, .{current_statement.arg, .[]});
+						array_add(*problems, .{arg = current_statement.arg});
+						problem_index = problems.count-1;
+					}
+					current_statement = *problem_statement_dropin;
+
 					current_statement.res.offset = tokens.count;
 					current_statement.res.count = 0;
 				case "=";
@@ -113,7 +138,10 @@ main :: () {
 				}
 			case ";";
 				if current_statement.arg.count {
-					if on_problem array_add(*problems, current_statement);
+					if on_problem {
+						array_add(*problems[problem_index].sols, current_statement.res);
+						current_statement = *normal_statement_dropin;
+					}
 					else array_add(*statements, current_statement);
 				}
 				on_res = false;
@@ -152,43 +180,51 @@ main :: () {
 
 	if !quiet_down && problems.count {
 		print("-------------- Given Problems ---------------\n");
-		for problems print("% :: %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
+		for problem: problems {
+			print("% :: ", to_string(tokens, problem.arg));
+			for sol: problem.sols {
+				print("%", to_string(tokens, sol));
+				if it_index < problem.sols.count-1 print(", ");
+				else print(";\n");
+			}
+		}
+			// print("% :: %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
 		print("---------------- Time to try ----------------\n");
 	}
 
-	problem_solutions: [..]Solution;
-	for problem: problems {
-		solve(statements, *tokens, problem.arg, *problem_solutions);
+	// problem_solutions: [..]Solution;
+	// for problem: problems {
+	// 	solve(statements, *tokens, problem.arg, *problem_solutions);
 
-		amount_solved := 0;
-		index_of_solution := 0;
-		for problem_solutions {
-			if it.state == .SOLVED {
-				amount_solved += 1;
-				index_of_solution = it_index;
-			}
-		}
+	// 	amount_solved := 0;
+	// 	index_of_solution := 0;
+	// 	for problem_solutions {
+	// 		if it.state == .SOLVED {
+	// 			amount_solved += 1;
+	// 			index_of_solution = it_index;
+	// 		}
+	// 	}
 
-		print_found_solutions := false;
-		if amount_solved != 1 {
-			print("Could not solve the problem with the given rules, found multiple solutions:\n");
-			print_found_solutions = true;
-		} else if !cmp(tokens, problem.res, problem_solutions[index_of_solution].expression) {
-			print("Could not solve the problem with the given rules, found the wrong solution:\n");
-			print_found_solutions = true;
-		}
+	// 	print_found_solutions := false;
+	// 	if amount_solved != 1 {
+	// 		print("Could not solve the problem with the given rules, found multiple solutions:\n");
+	// 		print_found_solutions = true;
+	// 	} else if !cmp(tokens, problem.res, problem_solutions[index_of_solution].expression) {
+	// 		print("Could not solve the problem with the given rules, found the wrong solution:\n");
+	// 		print_found_solutions = true;
+	// 	}
 
-		if print_all_intermediate_states
-			for problem_solutions print("%, state: %\n", to_string(tokens, it.expression), it.state);
-		if print_found_solutions {
-			for problem_solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
-		} else {
-			print("Solved:\n% :: %;\n", to_string(tokens, problem.arg), to_string(tokens, problem.res));
-		}
+	// 	if print_all_intermediate_states
+	// 		for problem_solutions print("%, state: %\n", to_string(tokens, it.expression), it.state);
+	// 	if print_found_solutions {
+	// 		for problem_solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
+	// 	} else {
+	// 		print("Solved:\n% :: %;\n", to_string(tokens, problem.arg), to_string(tokens, problem.res));
+	// 	}
 
-		array_reset(*problem_solutions);
-		print("\n");
-	}
+	// 	array_reset(*problem_solutions);
+	// 	print("\n");
+	// }
 
 }
 
@@ -294,6 +330,7 @@ cas :: inline (char: *u8) -> string {
 
 #import "Basic";
 #import "File";
+//#import "Iprof";
 
 explanation_message :: #string MARKDOWN
 # Explanation
