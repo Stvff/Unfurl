@@ -150,35 +150,45 @@ main :: () {
 		print("\n");
 	}
 
-	// if !quiet_down && problems.count {
-	// 	print("-------------- Given Problems ---------------\n");
-	// 	for problems print("% :: %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
-	// 	print("---------------- Time to try ----------------\n");
-	// }
+	if !quiet_down && problems.count {
+		print("-------------- Given Problems ---------------\n");
+		for problems print("% :: %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
+		print("---------------- Time to try ----------------\n");
+	}
 
-	// problem_solutions: [..]Solution;
-	// for problem: problems {
-	// 	solve(statements, *tokens, problem.arg, *problem_solutions);
+	problem_solutions: [..]Solution;
+	for problem: problems {
+		solve(statements, *tokens, problem.arg, *problem_solutions);
 
-	// 	amount_solved := 0;
-	// 	index_of_solution := 0;
-	// 	for problem_solutions {
-	// 		if it.state == .SOLVED {
-	// 			amount_solved += 1;
-	// 			index_of_solution = it_index;
-	// 		}
-	// 	}
-	// 	if amount_solved != 1 {
-	// 		print("Could not solve the problem with the given rules, TOO MUCH\n");
-	// 	} else if !cmp(tokens, problem.res, problem_solutions[index_of_solution].expression) {
-	// 		print("Could not solve the problem with the given rules, WRONG\n");
-	// 	} else {
-	// 		print("Solved:\n% :: %;\n", to_string(tokens, problem.arg), to_string(tokens, problem.res));
-	// 	}
+		amount_solved := 0;
+		index_of_solution := 0;
+		for problem_solutions {
+			if it.state == .SOLVED {
+				amount_solved += 1;
+				index_of_solution = it_index;
+			}
+		}
 
-	// 	array_reset(*problem_solutions);
-	// 	print("\n");
-	// }
+		print_found_solutions := false;
+		if amount_solved != 1 {
+			print("Could not solve the problem with the given rules, found multiple solutions:\n");
+			print_found_solutions = true;
+		} else if !cmp(tokens, problem.res, problem_solutions[index_of_solution].expression) {
+			print("Could not solve the problem with the given rules, found the wrong solution:\n");
+			print_found_solutions = true;
+		}
+
+		if print_all_intermediate_states
+			for problem_solutions print("%, state: %\n", to_string(tokens, it.expression), it.state);
+		if print_found_solutions {
+			for problem_solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
+		} else {
+			print("Solved:\n% :: %;\n", to_string(tokens, problem.arg), to_string(tokens, problem.res));
+		}
+
+		array_reset(*problem_solutions);
+		print("\n");
+	}
 
 }
 
@@ -204,11 +214,16 @@ solve :: (statements: []Statement, arena: *[..]u8, query: Expression, solutions:
 	}
 }
 
+/* This really doesn't need to be a seperate function, but I think this is a rare case where
+   the abstraction provides a lot of clarity. This is a complicated algorithm. */
 eval_step :: (statements: []Statement, arena: *[..]u8, query: Expression, solutions: *[..]Solution) -> bool {
 	something_found := false;
+	/* I think this loop, as well as the loop inside of it, can be parallelized. A lot of time is spent checking
+	   sub-expressions that never match up to anything, and it's the bulk of comparisons. */
 	for statement: statements {
 		width := statement.arg.count;
 		if width <= query.count for l: 0..(query.count-width) {
+			/* I'm quite convinced that constantly re-generating the query sub-expressions is a lot faster than caching them. */
 			subex := Expression.{query.offset + l, width};
 			if cmp(arena.*, statement.arg, subex) {
 				before := Expression.{query.offset, l};
