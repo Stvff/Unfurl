@@ -31,7 +31,7 @@ SSO + SSSO - SO - SSSO:
 ^0 := 1;
 ^1 := 0^;
 
-^^^^^00000:
+^^^^^000:
 
 (binary addition)
 
@@ -57,6 +57,14 @@ SSO + SSSO - SO - SSSO:
 |c := 1|;
 |d := 0^|;
 
+(If you want your numbers to expand automatically, use the second one here)
+(|+ :=;)
+^|+ := 1|+;
+
+
 | 0 1 0 1 1 + 0 0 1 0 1:
+| 1 1 0 1 0 + 1 0 1 0 0:
 
 | 1 0 0 + 1 1 0:
+
+^^^^^0|+:
