@@ -1,3 +1,4 @@
+(
 (These are the rules for a simple modular arithmetic on base 4)
 q + 0 := 1;
 q + 1 := 2;
@@ -24,3 +25,12 @@ SSO - SSSO:
 
 (Here's an example with ambiguous precedence, which causes it to have two valid solutions)
 SSO + SSSO - SO - SSSO:
+)
+
+(binary incrementing)
+^0 := 1;
+^1 := 0^;
+
+^^^^^00000:
+
+
