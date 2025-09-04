@@ -138,7 +138,9 @@ main :: () {
 				}
 			case ";";
 				if current_statement.arg.count {
+//					print("%\n", to_string(tokens, current_statement.res));
 					if on_problem {
+//						print("%\n", to_string(tokens, problems[problem_index].arg));
 						array_add(*problems[problem_index].sols, current_statement.res);
 						current_statement = *normal_statement_dropin;
 					}
@@ -185,8 +187,8 @@ main :: () {
 			for sol: problem.sols {
 				print("%", to_string(tokens, sol));
 				if it_index < problem.sols.count-1 print(", ");
-				else print(";\n");
 			}
+			print(";\n");
 		}
 			// print("% :: %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
 		print("---------------- Time to try ----------------\n");

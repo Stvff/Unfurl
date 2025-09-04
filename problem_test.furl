@@ -21,6 +21,9 @@
 n := m;
 q := p;
 
+aabb :: cdfs;
 a b :: c d;
 aabb :: ccdd;
 abbbaababa :: cdddccdcdc;
+
+a b :: n d;
