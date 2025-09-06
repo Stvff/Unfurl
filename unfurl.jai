@@ -180,11 +180,18 @@ main :: () {
 	arg_charset: [..]u8;
 	sol_charset: [..]u8;
 
+	max_arg_length, max_res_length, total_sol_count: int;
+
 	if !quiet_down && problems.count {
 		print("-------------- Given Problems ---------------\n");
 		for problem: problems {
 			for to_array(tokens, problem.arg) if !array_find(arg_charset, it) array_add(*arg_charset, it);
-			for sol: problem.sols for to_array(tokens, sol) if !array_find(sol_charset, it) array_add(*sol_charset, it);
+			max_arg_length = max(max_arg_length, problem.arg.count);
+			for sol: problem.sols {
+				for to_array(tokens, sol) if !array_find(sol_charset, it) array_add(*sol_charset, it);
+				max_res_length = max(max_res_length, sol.count);
+			}
+			total_sol_count += problem.sols.count;
 
 			print("% :: ", to_string(tokens, problem.arg));
 			for sol: problem.sols {
@@ -193,10 +200,15 @@ main :: () {
 			}
 			print(";\n");
 		}
+		print("---------------- Dimensions -----------------\n");
+		print_vars(max_arg_length, max_res_length, total_sol_count);
 		print("% -> %\n", arg_charset.(string), sol_charset.(string));
+		print("Total amount of rulesets to try: %\n", max_arg_length*max_res_length*total_sol_count);
 		print("---------------- Time to try ----------------\n");
 	}
 
+	tokens_endline := tokens.count;
+	statements_endline := statements.count;
 	for problem: problems {
 		solve(statements, *tokens, problem.arg, *solutions);
 
@@ -209,11 +221,11 @@ main :: () {
 			}
 		}
 
-		full_overlap := problem.sols.count == solutions.count;
+		full_overlap := problem.sols.count == amount_solved;
 		did_find := 0;
 		if full_overlap {
 			for given_res: problem.sols {
-				for found_res: solutions if cmp(tokens, given_res, found_res.expression) {
+				for found_res: solutions if found_res.state == .SOLVED && cmp(tokens, given_res, found_res.expression) {
 					did_find += 1;
 					break found_res;
 				}
@@ -339,6 +351,7 @@ cas :: inline (char: *u8) -> string {
 
 #import "Basic";
 #import "File";
+#import "Print_Vars";
 //#import "Iprof";
 
 explanation_message :: #string MARKDOWN

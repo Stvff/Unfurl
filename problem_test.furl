@@ -2,6 +2,7 @@
 	the ruleset that I want out of this is:
 	a := c;
 	b := d;
+	aabb := cdfs;
 
 	It should go through all the problems, collect all the
 	values it sees as the arg, and collect all the values
@@ -25,5 +26,3 @@ aabb :: cdfs;
 a b :: c d;
 aabb :: ccdd;
 abbbaababa :: cdddccdcdc;
-
-a b :: n d;
