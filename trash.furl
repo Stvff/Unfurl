@@ -9,7 +9,7 @@ _## := %%%;
 (
 	3230420 244903094 4340990 := 32;
 	0x1234234 := fads;
-	fads = 323;
+	fads = 323; (error: fads was already used and has therefore already gotten a value)
 
 	SSO + SSSO == SSSSSO;
 	SSO + SSSO :: SSSSSO;

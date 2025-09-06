@@ -84,8 +84,7 @@ main :: () {
 
 	{/* parsing ascii unfurl */
 		problem_index: int;
-		normal_statement_dropin, problem_statement_dropin: Statement;
-		current_statement: *Statement = *normal_statement_dropin;
+		current_statement: Statement;
 
 		on_res, on_problem, skip_colon, skip_equals := false;
 		in_comment := 0;
@@ -121,7 +120,6 @@ main :: () {
 						array_add(*problems, .{arg = current_statement.arg});
 						problem_index = problems.count-1;
 					}
-					current_statement = *problem_statement_dropin;
 
 					current_statement.res.offset = tokens.count;
 					current_statement.res.count = 0;
@@ -138,11 +136,8 @@ main :: () {
 				}
 			case ";";
 				if current_statement.arg.count {
-//					print("%\n", to_string(tokens, current_statement.res));
 					if on_problem {
-//						print("%\n", to_string(tokens, problems[problem_index].arg));
 						array_add(*problems[problem_index].sols, current_statement.res);
-						current_statement = *normal_statement_dropin;
 					}
 					else array_add(*statements, current_statement);
 				}
@@ -194,39 +189,44 @@ main :: () {
 		print("---------------- Time to try ----------------\n");
 	}
 
-	// problem_solutions: [..]Solution;
-	// for problem: problems {
-	// 	solve(statements, *tokens, problem.arg, *problem_solutions);
+	problem_solutions: [..]Solution;
+	for problem: problems {
+		solve(statements, *tokens, problem.arg, *problem_solutions);
 
-	// 	amount_solved := 0;
-	// 	index_of_solution := 0;
-	// 	for problem_solutions {
-	// 		if it.state == .SOLVED {
-	// 			amount_solved += 1;
-	// 			index_of_solution = it_index;
-	// 		}
-	// 	}
+		amount_solved := 0;
+		index_of_solution := 0;
+		for problem_solutions {
+			if it.state == .SOLVED {
+				amount_solved += 1;
+				index_of_solution = it_index;
+			}
+		}
 
-	// 	print_found_solutions := false;
-	// 	if amount_solved != 1 {
-	// 		print("Could not solve the problem with the given rules, found multiple solutions:\n");
-	// 		print_found_solutions = true;
-	// 	} else if !cmp(tokens, problem.res, problem_solutions[index_of_solution].expression) {
-	// 		print("Could not solve the problem with the given rules, found the wrong solution:\n");
-	// 		print_found_solutions = true;
-	// 	}
+		// full_overlap := false;
+		// for given_res: problem {
+		// 	did_find := 0;
+		// }
+		// if amount_solved != 1 {
+		// 	print("Could not solve the problem with the given rules, found multiple solutions:\n");
+		// 	print_found_solutions = true;
+		// } else if !cmp(tokens, problem.res, problem_solutions[index_of_solution].expression) {
+		// 	print("Could not solve the problem with the given rules, found the wrong solution:\n");
+		// 	print_found_solutions = true;
+		// }
+		// print_all_intermediate_solutions := true;
+		// print_found_solutions := true;
 
-	// 	if print_all_intermediate_states
-	// 		for problem_solutions print("%, state: %\n", to_string(tokens, it.expression), it.state);
-	// 	if print_found_solutions {
-	// 		for problem_solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
-	// 	} else {
-	// 		print("Solved:\n% :: %;\n", to_string(tokens, problem.arg), to_string(tokens, problem.res));
-	// 	}
+		// if print_all_intermediate_states
+		// 	for problem_solutions print("%, state: %\n", to_string(tokens, it.expression), it.state);
+		// if print_found_solutions {
+		// 	for problem_solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
+		// } else {
+		// 	print("Solved:\n% :: %;\n", to_string(tokens, problem.arg), to_string(tokens, problem.res));
+		// }
 
-	// 	array_reset(*problem_solutions);
-	// 	print("\n");
-	// }
+		array_reset(*problem_solutions);
+		print("\n");
+	}
 
 }
 
