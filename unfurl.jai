@@ -177,12 +177,13 @@ main :: () {
 		print("\n");
 	}
 
-	arg_charset: [..]u8;
-	sol_charset: [..]u8;
-
 	max_arg_length, max_res_length, total_sol_count: int;
+	arg_combset: [..]Expression;
+	sol_combset: [..]Expression;
 
 	if !quiet_down && problems.count {
+		arg_charset: [..]u8;
+		sol_charset: [..]u8;
 		print("-------------- Given Problems ---------------\n");
 		for problem: problems {
 			for to_array(tokens, problem.arg) if !array_find(arg_charset, it) array_add(*arg_charset, it);
@@ -204,6 +205,8 @@ main :: () {
 		print_vars(max_arg_length, max_res_length, total_sol_count);
 		print("% -> %\n", arg_charset.(string), sol_charset.(string));
 		print("Total amount of rulesets to try: %\n", max_arg_length*max_res_length*total_sol_count);
+		/* Theorem: All permutations of the charsets contain all the permutations of the subsets. */
+		/* Just not entirely sure yet how I'm going to generate that in an elegant way. I will have to sit on it. */
 		print("---------------- Time to try ----------------\n");
 	}
 
