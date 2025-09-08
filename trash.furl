@@ -42,4 +42,42 @@ _## := %%%;
 	instead of:
 	3242 :: 1212;
 	3242 :: 2121;
+
+	arg charset length = 2; acl
+	res charset length = 4; rcl
+	max arg length = 10; mal
+	max res length = 10; mrl
+	max rule count = 4;  mc
+
+	{1} := {1}, {1} := {2}, {1} := {3}, {1} := {4}, ..., {1} := {mrl}
+	{2} := {1}, {2} := {2}, {2} := {3}, {2} := {4}, ...
+	{3} := {1}, {3} := {2}, {3} := {3}, {3} := {4}, ...
+	{4} := {1}, {4} := {2}, {4} := {3}, {4} := {4}, ...
+	...
+	{mal} := {1}, {mal} := {2}, ...,   {mal} := {mrl}
+
+	{n} := {m}; is a certain amount of rules:
+	; acl^n * rcl^m
+
+	; Some Uiua code:
+Acl ← 2
+Rcl ← 4
+Mal ← 10
+Mrl ← 10
+Mc  ← 4
+SingleRulePermutations ← × ⁿ:Rcl: ⁿ:Acl
+SingleRulePermutations 3 2 # This shows the amount of rules that {3} := {2} is
+AllSingleRulePermutations = /+ ≡SingleRulePermutations °couple trans reshape couple:2 ÷2/×shape. +1range couple
+AllSingleRulePermutations Mal Mrl # shows allllll the permutations, but for a single rule
+RulePermutations ← /× --1 dip(+range).: AllSingleRulePermutations Mal Mrl
+RulePermutations 2 # Gives the amount of possible combinations when you have two rules
+AllRulePermutations ← /+≡RulePermutations +1range
+AllRulePermutations Mc # Gives all rulesets that need to be checked for completion
+
+	; For our case, this is bad.
+	; I'd need a 128 bit value to enumerate them all.
+	; And it would barely fit.
+
+	; To find the solution to my example problem, a 64 bit number would just about suffice.
+	; I need more serious culling
 )

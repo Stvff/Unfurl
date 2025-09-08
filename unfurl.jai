@@ -210,8 +210,8 @@ main :: () {
 		print("---------------- Time to try ----------------\n");
 	}
 
-	tokens_endline := tokens.count;
-	statements_endline := statements.count;
+	tokens_start_line := tokens.count;
+	statements_start_line := statements.count;
 	for problem: problems {
 		solve(statements, *tokens, problem.arg, *solutions);
 
