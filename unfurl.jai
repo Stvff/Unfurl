@@ -63,7 +63,8 @@ main :: () {
 			if arg == "all-states" print_all_intermediate_states = true;
 			else if arg == "only-solutions" quiet_down = true;
 			else if arg == "explain" {
-				print("%", explanation_message);
+				//print("%", explanation_message);
+				print_lines_to_terminal(explanation);
 				return;
 			} else {
 				print("%", help_message);
@@ -352,6 +353,68 @@ cas :: inline (char: *u8) -> string {
 #import "File";
 #import "Print_Vars";
 //#import "Iprof";
+
+SCB :: Line.{.START_CODE_BLOCK, ""};
+ECB :: Line.{.END_CODE_BLOCK, ""};
+EML :: Line.{.TEXT, ""};
+
+explanation :: Line.[
+	.{.HEADER1, "Explanation"}
+,	.{.LINE, "Unfurl is really nothing more than an elaborate substiution machine."}
+,	.{.TEXT, "You input rules:"}, SCB
+,	.{.RULE_ARG, "a"}, .{.RULE_RES, "b"}, ECB
+,	.{.TEXT, "And queries:"}, SCB
+,	.{.QUERY, "bbb"}, ECB
+,	.{.TEXT, "And the evaluator applies the rule to the queries:"}, SCB
+,	.{.RESULT_SOLVED, "aaa"}, ECB
+,	EML
+,	.{.TEXT, "Interestingly enough, there is an enormous wealth of complexity that can be extracted"}
+,	.{.LINE, "from this simple paradigm."}
+,	.{.TEXT, "For example, some rules and inputs have multiple different combinations. The evaluator"}
+,	.{.LINE, "always evaluates every single possible combination."}
+,	.{.TEXT, "As an example:"}, SCB
+,	.{.RULE_ARG, "aa"}, .{.RULE_RES, "b"}
+,	.{.QUERY, "aaa"}, ECB
+,	.{.TEXT, "Has two possible solutions:"}, SCB
+,	.{.RESULT_SOLVED, "ba"}, .{.RESULT_SOLVED, "ab"}, ECB
+,	.{.TEXT, "A more elaborate example:"}, SCB
+,	.{.RULE_ARG, "aa"}, .{.RULE_RES, "u"}
+,	.{.RULE_ARG, "aa"}, .{.RULE_RES, "v"}
+,	.{.QUERY, "aaa"}, ECB
+,	.{.TEXT, "Results in four possible solutions:"}, SCB
+,	.{.RESULT_SOLVED, "ua"}, .{.RESULT_SOLVED, "au"}, .{.RESULT_SOLVED, "va"}, .{.RESULT_SOLVED, "av"}, ECB
+,	EML
+,	.{.TEXT, "The evaluation continues applying rules until no more rules can be applied. This has"}
+,	.{.TEXT, "two implications:"}
+,	.{.TEXT, "1) Infinite evalution is possible:"}, SCB
+,	.{.RULE_ARG, "n"}, .{.RULE_RES, "nn"}, .{.QUERY, "n"}, ECB
+,	.{.TEXT, "2) The rules are applied to 'intermediate' results. This is where most of the real"}
+,	.{.TEXT, "   useful complexity of Unfurl comes from."}
+,	.{.TEXT, "As a basic example:"}, SCB
+,	.{.RULE_ARG, "N0"}, .{.RULE_RES, "1"}
+,	.{.RULE_ARG, "N1"}, .{.RULE_RES, "2"}
+,	.{.RULE_ARG, "N2"}, .{.RULE_RES, "3"}
+,	.{.QUERY, "NNN0"}, ECB
+,	.{.TEXT, "Results in:"}, SCB
+,	.{.RESULT_SOLVED, "3"}, ECB
+,	.{.TEXT, "When running the evaluator with -all-states, you can see all the intermediate steps."}, SCB
+,	.{.RESULT_INTERM, "NNN0"}
+,	.{.RESULT_INTERM, "NN1"}
+,	.{.RESULT_INTERM, "N2"}
+,	.{.RESULT_SOLVED_VERBOSE, "3"}, ECB
+,	EML
+,	.{.HEADER2, "Writing .furl files (aka my parser is not so smart so don't shake it too much it'll throw up)"}
+,	.{.LINE, "The only valid input is ascii."}
+,	.{.LINE, "All whitespace is ignored and removed (so spaces will not show up in rules, queries, or solutions)."}
+,	.{.LINE, "Comments can be placed between parentheses (like so (also they can nest))."}
+,	.{.TEXT, "When calling the evaluator on multiple files at once, all their rules and queries are combined into"}
+,	.{.LINE, "one larger evaluation pool."}
+,	EML
+,	.{.HEADER2, "What is this good for?"}
+,	.{.TEXT, "I wanted to make a really simple language that I could practice non-trivial multithreading on."}
+,	.{.TEXT, "Unfurl is actually turing complete as well, so at some point I want to make a 'program searcher'"}
+,	.{.TEXT, "for it, which is a type of symbolic artificial intelligence."}
+];
 
 explanation_message :: #string MARKDOWN
 # Explanation
