@@ -129,4 +129,13 @@ print_lines_to_markdown :: (sb: *String_Builder, lines: []Line) {
 	}
 }
 
+#run {
+	#import "Compiler";
+	options := get_build_options();
+	if options.backend != .LLVM return;
+	sb: String_Builder;
+	print_lines_to_markdown(*sb, explanation);
+	write_entire_file("test.md", *sb);
+}
+
 #import "Print_Color";
