@@ -12,11 +12,11 @@ Possible options:
         queries, or any stats.
 
     -explain
-        Prints an explanation of Unfurl (and its evaluator).
+        Prints an explanation of Unfurl (and its evaluator).  (Chapter 1)
     -explain-turing
-        Prints an explanation of how Unfurl is turing complete.
+        Prints an explanation of how Unfurl is turing complete. (Chapter 2)
     -explain-usefulness
-    	Because it's a common question.
+    	Because it's a common question.  (Chapter 3)
     -explain-all
     	Prints all explainers in one go.
     -explain-all-md <output_file.md>

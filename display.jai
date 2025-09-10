@@ -1,7 +1,7 @@
-RULE_ARG_COLOR :: Console_Color.GREEN;
+RULE_ARG_COLOR :: Console_Color.HI_GREEN;
 RULE_RES_COLOR :: Console_Color.HI_CYAN;
-QUERY_COLOR :: Console_Color.BLUE;
-SOL_COLOR_SOLVED :: Console_Color.HI_GREEN;
+QUERY_COLOR :: Console_Color.HI_RED;
+SOL_COLOR_SOLVED :: Console_Color.HI_BLUE;
 SOL_COLOR_INTERM :: Console_Color.RED;
 
 SYNTAX_COLOR :: Console_Color.MAGENTA;
@@ -15,14 +15,14 @@ print_statement :: (tokens: []u8, statement: Statement, do_newline := true) {
 }
 
 print_query :: (tokens: []u8, query: Expression, do_newline := true) {
-	print_color("%", to_string(tokens, query), color = SOL_COLOR_SOLVED);
+	print_color("%", to_string(tokens, query), color = QUERY_COLOR);
 	print_color(":", color = SYNTAX_COLOR);
 	if do_newline print("\n");
 }
 
 print_solution :: (tokens: []u8, sol: Solution, be_elaborate := false, do_newline := true) {
 	if sol.state == .SOLVED {
-		print_color("%", to_string(tokens, sol.expression), color = QUERY_COLOR);
+		print_color("%", to_string(tokens, sol.expression), color = SOL_COLOR_SOLVED);
 		if be_elaborate print(", %", ifx sol.state == .SOLVED then "solved" else "intermediate");
 		if do_newline print("\n");
 	} else if be_elaborate {
