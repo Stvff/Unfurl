@@ -57,14 +57,15 @@ Line :: struct {
 		RESULT_SOLVED_VERBOSE;
 		HEADER1;
 		HEADER2;
+		HEADER3;
+		HEADER4;
 	};
 	text: string;
 }
 
 print_lines_to_terminal :: (lines: []Line) {
 	indentation_level := 2;
-	for line: lines {
-		if #complete line.type == {
+	for line: lines if #complete line.type == {
 		case .LINE;
 			for 1..indentation_level print(" ");
 			print("%\n", line.text);
@@ -100,7 +101,31 @@ print_lines_to_terminal :: (lines: []Line) {
 		case .HEADER2;
 			print(" ");
 			print_color("%\n", line.text, color = .YELLOW, .UNDERLINE);
-		}
+		case .HEADER3;
+			print("  ");
+			print_color("%\n", line.text, color = .YELLOW, .UNDERLINE);
+		case .HEADER4;
+			print("   ");
+			print_color("%\n", line.text, color = .YELLOW, .UNDERLINE);
+	}
+}
+
+print_lines_to_markdown :: (sb: *String_Builder, lines: []Line) {
+	for line: lines if #complete line.type == {
+		case .LINE; print(sb, "%\\\n", line.text);
+		case .TEXT; print(sb, "%\n", line.text);
+		case .START_CODE_BLOCK; print(sb, "```%\n", line.text);
+		case .END_CODE_BLOCK; print(sb, "```\n");
+		case .RULE_ARG; print(sb, "% := ", line.text);
+		case .RULE_RES; print(sb, "%;\n", line.text);
+		case .QUERY; print(sb, "%:\n", line.text);
+		case .RESULT_SOLVED; print(sb, "%\n", line.text);
+		case .RESULT_INTERM; print(sb, "%, intermediate\n", line.text);
+		case .RESULT_SOLVED_VERBOSE; print(sb, "%, solved\n", line.text);
+		case .HEADER1; print(sb, "# %\n", line.text);
+		case .HEADER2; print(sb, "## %\n", line.text);
+		case .HEADER3; print(sb, "### %\n", line.text);
+		case .HEADER4; print(sb, "#### %\n", line.text);
 	}
 }
 
