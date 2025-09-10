@@ -13,6 +13,7 @@ q + 3 := 0;
 2 + 3:
 2 + 1:
 1 + 1 + 1 + 1:
+)
 
 (This is the classic peano arithmetic successor function situation)
 O +    := ;
@@ -25,7 +26,6 @@ SSO - SSSO:
 
 (Here's an example with ambiguous precedence, which causes it to have two valid solutions)
 SSO + SSSO - SO - SSSO:
-)
 
 (binary incrementing)
 ^0 := 1;

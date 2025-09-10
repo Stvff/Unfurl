@@ -159,7 +159,7 @@ main :: () {
 
 	if !quiet_down {
 		if statements.count print("---------------- Given Rules ----------------\n");
-		for statements print("% := %;\n", to_string(tokens, it.arg), to_string(tokens, it.res));
+		for statements print_statement(tokens, it);
 		if queries.count print("------------ Queries and Results ------------\n");
 	}
 
@@ -167,12 +167,12 @@ main :: () {
 	for query: queries {
 		solve(statements, *tokens, query, *solutions);
 
-		if !quiet_down print("%: % comparisons, % explored states, solutions:\n", to_string(tokens, query), cmp_counter, solutions.count);
+		if !quiet_down {
+			print_query(tokens, query, false);
+			print(" % comparisons, % explored states, solutions:\n", cmp_counter, solutions.count);
+		}
 		cmp_counter = 0;
-		if print_all_intermediate_states
-			for solutions print("%, state: %\n", to_string(tokens, it.expression), it.state);
-		else
-			for solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
+		for solutions print_solution(tokens, it, print_all_intermediate_states);
 		array_reset(*solutions);
 		print("\n");
 	}
@@ -194,17 +194,12 @@ main :: () {
 			}
 			total_sol_count += problem.sols.count;
 
-			print("% :: ", to_string(tokens, problem.arg));
-			for sol: problem.sols {
-				print("%", to_string(tokens, sol));
-				if it_index < problem.sols.count-1 print(", ");
-			}
-			print(";\n");
+			print_problem(tokens, problem);
 		}
 		print("---------------- Dimensions -----------------\n");
 		print_vars(max_arg_length, max_res_length, total_sol_count);
 		print("% -> %\n", arg_charset.(string), sol_charset.(string));
-		print("Total amount of rulesets to try: %\n", max_arg_length*max_res_length*total_sol_count);
+		// print("Total amount of rulesets to try: %\n", max_arg_length*max_res_length*total_sol_count);
 		/* Theorem: All permutations of the charsets contain all the permutations of the subsets. */
 		/* Just not entirely sure yet how I'm going to generate that in an elegant way. I will have to sit on it. */
 		print("---------------- Time to try ----------------\n");
@@ -239,11 +234,11 @@ main :: () {
 		if !full_overlap {
 			print("Could not solve the problem with the given rules, found the following instead.\n");
 		}
-		if !quiet_down print("%: % comparisons, % explored states, solutions:\n", to_string(tokens, problem.arg), cmp_counter, solutions.count);
-		if print_all_intermediate_states
-			for solutions print("%, state: %\n", to_string(tokens, it.expression), it.state);
-		else
-			for solutions if it.state == .SOLVED print("%\n", to_string(tokens, it.expression));
+		if !quiet_down {
+			print_query(tokens, problem.arg, false);
+			print(" % comparisons, % explored states, solutions:\n", cmp_counter, solutions.count);
+		}
+		for solutions print_solution(tokens, it, print_all_intermediate_states);
 
 		array_reset(*solutions);
 		cmp_counter = 0;
@@ -352,6 +347,7 @@ cas :: inline (char: *u8) -> string {
 	return s;
 }
 
+#load "display.jai";
 #import "Basic";
 #import "File";
 #import "Print_Vars";
