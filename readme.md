@@ -1,5 +1,5 @@
 # Unfurl Explanation
-Unfurl is really nothing more than an elaborate substitution machine.
+Unfurl is really nothing more than an elaborate substitution machine.\
 You input rules:
 ```
 a := b;
@@ -43,9 +43,13 @@ av
 
 The evaluation continues applying rules until no more rules can be applied. This has
 two implications:
-1) Infinite evaluation is possible (for example (n := nn; n:))
+1) Infinite evalution is possible:
+```
+n := nn;
+n:
+```
 2) The rules are applied to 'intermediate' results. This is where most of the real
-useful complexity of Unfurl comes from.\
+   useful complexity of Unfurl comes from.\
 As a basic example:
 ```
 N0 := 1;
@@ -59,10 +63,10 @@ Results in:
 ```
 When running the evaluator with -all-states, you can see all the intermediate steps.
 ```
-NNN0, state: ANALYZED
-NN1, state: ANALYZED
-N2, state: ANALYZED
-3, state: SOLVED
+NNN0, intermediate
+NN1, intermediate
+N2, intermediate
+3, solved
 ```
 
 ## Writing .furl files (aka my parser is not so smart so don't shake it too much it'll throw up)
@@ -73,6 +77,6 @@ When calling the evaluator on multiple files at once, all their rules and querie
 one larger evaluation pool.
 
 ## What is this good for?
-I wanted to make a really simple language that I could practice non-trivial multithreading on.\
+I wanted to make a really simple language that I could practice non-trivial multithreading on.
 Unfurl is actually turing complete as well, so at some point I want to make a 'program searcher'
 for it, which is a type of symbolic artificial intelligence.

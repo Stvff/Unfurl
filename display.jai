@@ -135,7 +135,7 @@ print_lines_to_markdown :: (sb: *String_Builder, lines: []Line) {
 	if options.backend != .LLVM return;
 	sb: String_Builder;
 	print_lines_to_markdown(*sb, explanation);
-	write_entire_file("test.md", *sb);
+	write_entire_file("readme.md", *sb);
 }
 
 #import "Print_Color";

@@ -363,8 +363,8 @@ ECB :: Line.{.END_CODE_BLOCK, ""};
 EML :: Line.{.TEXT, ""};
 
 explanation :: Line.[
-	.{.HEADER1, "Explanation"}
-,	.{.LINE, "Unfurl is really nothing more than an elaborate substiution machine."}
+	.{.HEADER1, "Unfurl Explanation"}
+,	.{.LINE, "Unfurl is really nothing more than an elaborate substitution machine."}
 ,	.{.TEXT, "You input rules:"}, SCB
 ,	.{.RULE_ARG, "a"}, .{.RULE_RES, "b"}, ECB
 ,	.{.TEXT, "And queries:"}, SCB
@@ -393,7 +393,7 @@ explanation :: Line.[
 ,	.{.TEXT, "1) Infinite evalution is possible:"}, SCB
 ,	.{.RULE_ARG, "n"}, .{.RULE_RES, "nn"}, .{.QUERY, "n"}, ECB
 ,	.{.TEXT, "2) The rules are applied to 'intermediate' results. This is where most of the real"}
-,	.{.TEXT, "   useful complexity of Unfurl comes from."}
+,	.{.LINE, "   useful complexity of Unfurl comes from."}
 ,	.{.TEXT, "As a basic example:"}, SCB
 ,	.{.RULE_ARG, "N0"}, .{.RULE_RES, "1"}
 ,	.{.RULE_ARG, "N1"}, .{.RULE_RES, "2"}
