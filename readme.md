@@ -22,7 +22,7 @@ And queries:
 ```
 bbb:
 ```
-And the evaluator applies the rule to the queries:
+And the evaluator applies the rules to the queries:
 ```
 aaa
 ```
@@ -75,7 +75,7 @@ Results in:
 ```
 3
 ```
-When running the evaluator with -all-states, you can see all the intermediate steps.
+When running the evaluator with `-all-states`, you can see all the intermediate steps.
 ```
 NNN0, intermediate
 NN1, intermediate
@@ -98,7 +98,7 @@ The standard way to go about proving this is to simulate a Turing machine, or to
 something else that can simulate a turing machine.\
 In Unfurl's case, the latter has been done (via rule 110), and I'll attempt to lay out
 a rough guide on how to do the former here, as well as highlight some important
- qualities that make it all possible.
+qualities that make it possible.
 
 ### 2.1- Important Qualities of Equivalence
 Turing machines sit on a tape and move cell-by-cell. Unfurl evaluates one tape in full, but
@@ -134,7 +134,7 @@ I wanted to make a really simple language that I could practice
 nontrivial multithreading on.\
 After I'd made the reference interpreter, I realized that it's really fascinating to
 have a single-operator turing complete language, and it's a fun sort of puzzle
- activity to play with.
+activity to play with.
 
 This being said, at some point I want to make a 'program searcher', that can find
 rulesets to solve problems on its own.

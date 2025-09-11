@@ -395,7 +395,7 @@ explanation :: Line.[
 ,	.{.RULE_ARG, "a"}, .{.RULE_RES, "b"}, ECB
 ,	.{.TEXT, "And queries:"}, SCB
 ,	.{.QUERY, "bbb"}, ECB
-,	.{.TEXT, "And the evaluator applies the rule to the queries:"}, SCB
+,	.{.TEXT, "And the evaluator applies the rules to the queries:"}, SCB
 ,	.{.RESULT_SOLVED, "aaa"}, ECB
 ,	EML
 ,	.{.TEXT, "Interestingly enough, there is an enormous wealth of complexity that can be extracted"}
@@ -427,7 +427,7 @@ explanation :: Line.[
 ,	.{.QUERY, "NNN0"}, ECB
 ,	.{.TEXT, "Results in:"}, SCB
 ,	.{.RESULT_SOLVED, "3"}, ECB
-,	.{.TEXT, "When running the evaluator with -all-states, you can see all the intermediate steps."}, SCB
+,	.{.TEXT, "When running the evaluator with `-all-states`, you can see all the intermediate steps."}, SCB
 ,	.{.RESULT_INTERM, "NNN0"}
 ,	.{.RESULT_INTERM, "NN1"}
 ,	.{.RESULT_INTERM, "N2"}
@@ -451,7 +451,7 @@ explain_turing :: Line.[
 ,	.{.LINE, "something else that can simulate a turing machine."}
 ,	.{.TEXT, "In Unfurl's case, the latter has been done (via rule 110), and I'll attempt to lay out"}
 ,	.{.TEXT, "a rough guide on how to do the former here, as well as highlight some important"}
-,	.{.TEXT, " qualities that make it all possible."}
+,	.{.TEXT, "qualities that make it possible."}
 ,	EML
 ,	.{.HEADER3, "2.1- Important Qualities of Equivalence"}
 ,	.{.TEXT, "Turing machines sit on a tape and move cell-by-cell. Unfurl evaluates one tape in full, but"}
@@ -486,7 +486,7 @@ explain_usefulness :: Line.[
 ,	.{.LINE, "nontrivial multithreading on."}
 ,	.{.TEXT, "After I'd made the reference interpreter, I realized that it's really fascinating to"}
 ,	.{.TEXT, "have a single-operator turing complete language, and it's a fun sort of puzzle"}
-,	.{.TEXT, " activity to play with."}
+,	.{.TEXT, "activity to play with."}
 ,	EML
 ,	.{.TEXT, "This being said, at some point I want to make a 'program searcher', that can find"}
 ,	.{.TEXT, "rulesets to solve problems on its own."}
