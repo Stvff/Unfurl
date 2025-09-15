@@ -127,8 +127,35 @@ When directly simulating a turing machine, it can be impractical how unfurl eval
 at all points on the tape at the same time. Indeed, it can lead to
 guarenteed 'race conditions'. To mitigate this, there are two prominent strategies.
 
-UNFINISHED
+The first technique is to constrain evaluation to one point in the tape using a 'readhead'
+that is included in every rule.
+```
+|a := b|;
+|aaa:
+```
+When looking at the intermediate states, we can see how the evaluation went very orderly:
+```
+|aaa, intermediate
+b|aa, intermediate
+bb|a, intermediate
+bbb|, solved
+```
+As opposed to without the readhead:
+```
+a := b;
+aaa:
+aaa, intermediate
+baa, intermediate
+aba, intermediate
+aab, intermediate
+bba, intermediate
+bab, intermediate
+abb, intermediate
+bbb, solved
+```
 
+The second technique is to change the symbol set during evaluation.
+Generally this is only useful in conjuction with the first technique.
 ## 3- What is this good for?
 I wanted to make a really simple language that I could practice
 nontrivial multithreading on.\

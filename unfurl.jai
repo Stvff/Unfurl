@@ -476,8 +476,19 @@ explain_turing :: Line.[
 ,	.{.TEXT, "at all points on the tape at the same time. Indeed, it can lead to"}
 ,	.{.TEXT, "guarenteed 'race conditions'. To mitigate this, there are two prominent strategies."}
 ,	EML
-,	.{.TEXT, "UNFINISHED"}
+,	.{.TEXT, "The first technique is to constrain evaluation to one point in the tape using a 'readhead'"}
+,	.{.TEXT, "that is included in every rule."}, SCB
+,	.{.RULE_ARG, "|a"}, .{.RULE_RES, "b|"}, .{.QUERY, "|aaa"}, ECB
+,	.{.TEXT, "When looking at the intermediate states, we can see how the evaluation went very orderly:"}, SCB
+,	.{.RESULT_INTERM, "|aaa"}, .{.RESULT_INTERM, "b|aa"}, .{.RESULT_INTERM, "bb|a"}, .{.RESULT_SOLVED_VERBOSE, "bbb|"}, ECB
+,	.{.TEXT, "As opposed to without the readhead:"}, SCB
+,	.{.RULE_ARG, "a"}, .{.RULE_RES, "b"}, .{.QUERY, "aaa"}, .{.RESULT_INTERM, "aaa"}
+,	.{.RESULT_INTERM, "baa"}, .{.RESULT_INTERM, "aba"}, .{.RESULT_INTERM, "aab"}
+,	.{.RESULT_INTERM, "bba"}, .{.RESULT_INTERM, "bab"}, .{.RESULT_INTERM, "abb"}
+,	.{.RESULT_SOLVED_VERBOSE, "bbb"}, ECB
 ,	EML
+,	.{.TEXT, "The second technique is to change the symbol set during evaluation."}
+,	.{.TEXT, "Generally this is only useful in conjuction with the first technique."}
 ];
 
 explain_usefulness :: Line.[
