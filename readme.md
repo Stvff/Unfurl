@@ -156,6 +156,7 @@ bbb, solved
 
 The second technique is to change the symbol set during evaluation.
 Generally this is only useful in conjuction with the first technique.
+UNFINISHED
 ## 3- What is this good for?
 I wanted to make a really simple language that I could practice
 nontrivial multithreading on.\

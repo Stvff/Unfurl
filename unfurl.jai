@@ -489,6 +489,7 @@ explain_turing :: Line.[
 ,	EML
 ,	.{.TEXT, "The second technique is to change the symbol set during evaluation."}
 ,	.{.TEXT, "Generally this is only useful in conjuction with the first technique."}
+,	.{.TEXT, "UNFINISHED"}
 ];
 
 explain_usefulness :: Line.[
