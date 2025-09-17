@@ -1,3 +1,4 @@
 .build/
 unfurl
+unfurl-arm64
 *.exe
