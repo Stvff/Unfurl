@@ -1,20 +1,26 @@
-(this makes the tape expand)
+(
+	This is a 3-state Busy Beaver Turing machine, converted into a set of Unfurl definitions.
+	The technique used here can be applied to convert any Turing machine to Unfurl.
+)
+
+(This makes the tape expand)
 	>| := >0|;
 	|< := |0<;
 
-(This is for displaying intermediate state)
+(This is for displaying intermediate state (optional))
 	{A> := [A>;
 	{B> := [B>;
 	{C> := [C>;
 
-(In this technique, every m-configuration will have alphabet*2 amount of configurations)
 (This part is just changing an L move into something the machine knows)
-	0<A} := {A> 0;
-	0<B} := {B> 0;
-	0<C} := {C> 0;
-	1<A} := {A> 1;
-	1<B} := {B> 1;
-	1<C} := {C> 1;
+	0<A} := {A>0;
+	1<A} := {A>1;
+
+	0<B} := {B>0;
+	1<B} := {B>1;
+
+	0<C} := {C>0;
+	1<C} := {C>1;
 
 (The actual rules)
 {A>0 := 1 {B>;
@@ -26,24 +32,6 @@
 {C>0 := <B} 1;
 {C>1 := [H>1;
 
-|000{A>000|:
-
-
-(In this technique, every m-configuration will have |alphabet|^2 amount of definitions, and it cannot expand (it would be |Q| amount of extra configurations))
-(
-	0 [A>0 := 0 1 [B>;
-	1 [A>0 := 1 1 [B>;
-	0 [A>1 := [C>0 1;
-	1 [A>1 := [C>1 1;
-
-	0 [B>0 := [A>0 1;
-	1 [B>0 := [A>1 1;
-	0 [B>1 := 0 1 [B>;
-	1 [B>1 := 1 1 [B>;
-
-	0 [C>0 := [B>0 1;
-	1 [C>0 := [B>1 1;
-	0 [C>1 := 0 1;
-	1 [C>1 := 1 1;
-	0 0 0 0 0 0 [A>0 0 0 0 0 0:
-)
+(Two examples, both work (and give the same end result), the first one just looks better when printed)
+0 0 0 {A>0 0 0:
+| {A> |:
