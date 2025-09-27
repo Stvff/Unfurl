@@ -1,11 +1,11 @@
 # Installation
 Unfurl is just one executable, `unfurl` (`unfurl.exe` on windows).
-It can be downloaded [here](https://github.com/Stvff/Unfurl/releases).\
+It can be downloaded [here](https://github.com/Stvff/Unfurl/releases/latest).\
 You may need to give it executable permissions on linux:
 ```
 chmod +x ./unfurl
 ```
-After that, and after adding it to your path in some way,
+After that, and after adding it to your `PATH` in some way,
 you can just run the executable in a terminal and it will tell you what to do.
 
 The executable contains explainers on every subject, under various `-explain` flags.
@@ -87,26 +87,42 @@ N2, intermediate
 The only valid input is ascii.\
 All whitespace is ignored and removed (so spaces will not show up in rules,
 queries, or solutions).\
-Comments can be placed between parentheses (like so (also they can nest)).\
+Comments can be placed between parentheses (like so (they can nest)).\
 When calling the evaluator on multiple files at once, all their rules and queries are
 combined into one larger evaluation pool.
 
 ## 2- Turing Compleness
 Unfurl is turing complete. The reason why anything is Turing complete is always somewhat
 vague, since it comes down to "Can you do the things that a Turing machine can do?"\
-The standard way to go about proving this is to simulate a Turing machine, or to simulate
-something else that can simulate a turing machine.\
-In Unfurl's case, the latter has been done (via rule 110), and I'll attempt to lay out
-a rough guide on how to do the former here, as well as highlight some important
-qualities that make it possible.
+The standard way to go about proving this is to provide a method to simulate any Turing
+machine, or to simulate something else that can simulate any turing machine.\
+In Unfurl's case, both have been done. The latter via an implementation of rule 110, and
+the former will be outlined in here. Furthermore, we will look at some important qualities
+of Unfurl that make these things possible.
 
 ### 2.1- Important Qualities of Equivalence
+#### 2.1.1- The Readhead
 Turing machines sit on a tape and move cell-by-cell. Unfurl evaluates one tape in full, but
 in order to apply rules, it subdivides the tape into smaller 'subtapes' to compare against.
-In fact, it subdivides in all possible ways, whichs means that there is always a set of
+In fact, it subdivides in all possible ways, which means that there is always a set of
 'subtapes' that _look_ like a 'scanning window' of the full tape: just like the one a Turing
-machine sees. We will look at how to leverage this effectively in the next paragraph.
+machine sees. Let's take the following rule and query:
+```
+a := >A;
+aaa:
+```
+When we look at the intermediate results, we can see that the first three applications appear
+as if there is a readhead going through the tape, capitalizing the letter it looks at.
+```
+>Aaa, intermediate
+a>Aa, intermediate
+aa>A, intermediate
+```
+Of course, the evaluator continues, because we did not fully constrain it.\
+To constrain it, we can include the readhead in the query, as well as including it
+in every rule, so that evaluation can only happen wherever the readhead is.
 
+#### 2.1.2- The Unbounded Tape
 Turing machines have infinite tapes. At least, they are not principially bounded.
 Unfurl begins with a finite tape, but there is a large number of rulesets that expand the
 tape during evaluation, since the length of a rule's result can be larger than its input:
@@ -118,45 +134,15 @@ bbbbbbbbb
 A good way to make use of this is to have 'end markers' on the tape, and some rules to
 expand the tape when required.
 
+#### 2.1.2- 'Internal' State
 Finally, Turing machines have internal state. Unfurl does not have this at all.
 However, that is not the end of the line; internal state can be translated into
 symbols on the tape, and the ruleset adjusted accordingly. More on this later.
-
-### 2.2- Making the Evaluator 'Walk' and Externalizing Internal State
-When directly simulating a turing machine, it can be impractical how unfurl evaluates
-at all points on the tape at the same time. Indeed, it can lead to
-guarenteed 'race conditions'. To mitigate this, there are two prominent strategies.
-
-The first technique is to constrain evaluation to one point in the tape using a 'readhead'
-that is included in every rule.
-```
-|a := b|;
-|aaa:
-```
-When looking at the intermediate states, we can see how the evaluation went very orderly:
-```
-|aaa, intermediate
-b|aa, intermediate
-bb|a, intermediate
-bbb|, solved
-```
-As opposed to without the readhead:
-```
-a := b;
-aaa:
-aaa, intermediate
-baa, intermediate
-aba, intermediate
-aab, intermediate
-bba, intermediate
-bab, intermediate
-abb, intermediate
-bbb, solved
-```
-
-The second technique is to change the symbol set during evaluation.
-Generally this is only useful in conjuction with the first technique.
+### 2.2- General technique for converting a Turing machine to Unfurl substitution rules
+There is of course more than one way to do this, but the technique layed out here
+approaches optimal.
 UNFINISHED
+
 ## 3- What is this good for?
 I wanted to make a really simple language that I could practice
 nontrivial multithreading on.\

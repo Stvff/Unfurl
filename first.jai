@@ -1,3 +1,6 @@
+release :: false;
+make_readme :: release || true;
+
 #run {
 	defer set_build_options_dc(.{do_output = false});
 
@@ -16,10 +19,9 @@
 	}
 
 	set_build_options(options, w);
+	add_build_string(tprint("make_readme :: %;", make_readme), w);
 	add_build_file("unfurl.jai", w);
 }
 
-
-// #import "Toolchains/Android";
 #import "Compiler";
 #import "Basic";

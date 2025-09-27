@@ -45,20 +45,20 @@ print_problem :: (tokens: []u8, problem: Res_Set, do_newline := true) {
 
 Line :: struct {
 	type: enum {
-		LINE;
-		TEXT;
-		START_CODE_BLOCK;
-		END_CODE_BLOCK;
-		RULE_ARG;
-		RULE_RES;
-		QUERY;
-		RESULT_SOLVED;
-		RESULT_INTERM;
-		RESULT_SOLVED_VERBOSE;
-		HEADER1;
-		HEADER2;
-		HEADER3;
-		HEADER4;
+		Line;
+		Text;
+		Start_Code_Block;
+		End_Code_Block;
+		Rule_Arg;
+		Rule_Res;
+		Query;
+		Result_Solved;
+		Result_Interm;
+		Result_Solved_Verbose;
+		Header1;
+		Header2;
+		Header3;
+		Header4;
 	};
 	text: string;
 }
@@ -66,45 +66,45 @@ Line :: struct {
 print_lines_to_terminal :: (lines: []Line) {
 	indentation_level := 2;
 	for line: lines if #complete line.type == {
-		case .LINE;
+		case .Line;
 			for 1..indentation_level print(" ");
 			print("%\n", line.text);
-		case .TEXT;
+		case .Text;
 			for 1..indentation_level print(" ");
 			print("%\n", line.text);
-		case .START_CODE_BLOCK; indentation_level += 4;
-		case .END_CODE_BLOCK; indentation_level -= 4;
-		case .RULE_ARG;
+		case .Start_Code_Block; indentation_level += 4;
+		case .End_Code_Block; indentation_level -= 4;
+		case .Rule_Arg;
 			for 1..indentation_level print(" ");
 			print_color("%", line.text, color = RULE_ARG_COLOR);
 			print_color(" := ", color = SYNTAX_COLOR);
-		case .RULE_RES;
+		case .Rule_Res;
 			print_color("%", line.text, color = RULE_RES_COLOR);
 			print_color(";\n", color = SYNTAX_COLOR);
-		case .QUERY;
+		case .Query;
 			for 1..indentation_level print(" ");
 			print_color("%", line.text, color = QUERY_COLOR);
 			print_color(":\n", color = SYNTAX_COLOR);
-		case .RESULT_SOLVED;
+		case .Result_Solved;
 			for 1..indentation_level print(" ");
 			print_color("%\n", line.text, color = SOL_COLOR_SOLVED);
-		case .RESULT_INTERM;
+		case .Result_Interm;
 			for 1..indentation_level print(" ");
 			print_color("%", line.text, color = SOL_COLOR_INTERM);
 			print(", intermediate\n");
-		case .RESULT_SOLVED_VERBOSE;
+		case .Result_Solved_Verbose;
 			for 1..indentation_level print(" ");
 			print_color("%", line.text, color = SOL_COLOR_SOLVED);
 			print(", solved\n");
-		case .HEADER1;
+		case .Header1;
 			print_color("%\n", line.text, color = .HI_YELLOW, .UNDERLINE);
-		case .HEADER2;
+		case .Header2;
 			print(" ");
 			print_color("%\n", line.text, color = .HI_YELLOW, .UNDERLINE);
-		case .HEADER3;
+		case .Header3;
 			print("  ");
 			print_color("%\n", line.text, color = .YELLOW, .UNDERLINE);
-		case .HEADER4;
+		case .Header4;
 			print("   ");
 			print_color("%\n", line.text, color = .YELLOW, .UNDERLINE);
 	}
@@ -112,42 +112,42 @@ print_lines_to_terminal :: (lines: []Line) {
 
 print_lines_to_markdown :: (sb: *String_Builder, lines: []Line) {
 	for line: lines if #complete line.type == {
-		case .LINE; print(sb, "%\\\n", line.text);
-		case .TEXT; print(sb, "%\n", line.text);
-		case .START_CODE_BLOCK; print(sb, "```%\n", line.text);
-		case .END_CODE_BLOCK; print(sb, "```\n");
-		case .RULE_ARG; print(sb, "% := ", line.text);
-		case .RULE_RES; print(sb, "%;\n", line.text);
-		case .QUERY; print(sb, "%:\n", line.text);
-		case .RESULT_SOLVED; print(sb, "%\n", line.text);
-		case .RESULT_INTERM; print(sb, "%, intermediate\n", line.text);
-		case .RESULT_SOLVED_VERBOSE; print(sb, "%, solved\n", line.text);
-		case .HEADER1; print(sb, "# %\n", line.text);
-		case .HEADER2; print(sb, "## %\n", line.text);
-		case .HEADER3; print(sb, "### %\n", line.text);
-		case .HEADER4; print(sb, "#### %\n", line.text);
+		case .Line; print(sb, "%\\\n", line.text);
+		case .Text; print(sb, "%\n", line.text);
+		case .Start_Code_Block; print(sb, "```%\n", line.text);
+		case .End_Code_Block; print(sb, "```\n");
+		case .Rule_Arg; print(sb, "% := ", line.text);
+		case .Rule_Res; print(sb, "%;\n", line.text);
+		case .Query; print(sb, "%:\n", line.text);
+		case .Result_Solved; print(sb, "%\n", line.text);
+		case .Result_Interm; print(sb, "%, intermediate\n", line.text);
+		case .Result_Solved_Verbose; print(sb, "%, solved\n", line.text);
+		case .Header1; print(sb, "# %\n", line.text);
+		case .Header2; print(sb, "## %\n", line.text);
+		case .Header3; print(sb, "### %\n", line.text);
+		case .Header4; print(sb, "#### %\n", line.text);
 	}
 }
 
 installation_guide :: Line.[
-	.{.HEADER1, "Installation"}
-,	.{.TEXT, "Unfurl is just one executable, `unfurl` (`unfurl.exe` on windows)."}
-,	.{.LINE, "It can be downloaded [here](https://github.com/Stvff/Unfurl/releases)."}
-,	.{.TEXT, "You may need to give it executable permissions on linux:"}, SCB
-,	.{.TEXT, "chmod +x ./unfurl"}, ECB
-,	.{.TEXT, "After that, and after adding it to your path in some way,"}
-,	.{.TEXT, "you can just run the executable in a terminal and it will tell you what to do."}
+	.{.Header1, "Installation"}
+,	.{.Text, "Unfurl is just one executable, `unfurl` (`unfurl.exe` on windows)."}
+,	.{.Line, "It can be downloaded [here](https://github.com/Stvff/Unfurl/releases/latest)."}
+,	.{.Text, "You may need to give it executable permissions on linux:"}, SCB
+,	.{.Text, "chmod +x ./unfurl"}, ECB
+,	.{.Text, "After that, and after adding it to your `PATH` in some way,"}
+,	.{.Text, "you can just run the executable in a terminal and it will tell you what to do."}
 ,	EML
-,	.{.TEXT, "The executable contains explainers on every subject, under various `-explain` flags."}
-,	.{.TEXT, "The rest of this readme consists of those explainers (generated by unfurl itself!),"}
-,	.{.TEXT, "in case you're not near your computer at the moment."}
+,	.{.Text, "The executable contains explainers on every subject, under various `-explain` flags."}
+,	.{.Text, "The rest of this readme consists of those explainers (generated by unfurl itself!),"}
+,	.{.Text, "in case you're not near your computer at the moment."}
 ,	EML
 ];
 
 #run {
 	#import "Compiler";
 	options := get_build_options();
-	if options.backend != .LLVM return;
+	if !make_readme return; /* this variable is defined in first.jai and added as a build_string at comptime */
 	sb: String_Builder;
 	print_lines_to_markdown(*sb, installation_guide);
 	print_lines_to_markdown(*sb, explanation);
