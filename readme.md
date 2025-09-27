@@ -132,7 +132,7 @@ aaa>, solved
 ```
 
 #### 2.1.2- The Unbounded Tape
-Turing machines have infinite tapes. At least, they are not principially bounded.
+Turing machines sit on an infinite tape. At least, they are not principially bounded.
 Unfurl begins with a finite tape, but there are many possible rulesets that expand the
 tape during evaluation, since the length of a rule's result can be larger than its input:
 ```
@@ -153,7 +153,7 @@ we can make an orderly and infinitely expanding tape:
 Finally, Turing machines have internal state. Unfurl does not have this at all.
 However, that is not the end of the line; really the important part is the state
 of the whole system, tape and 'internal state' (or M-configuration) combined.
-This all-encompassing state can easily be transposed onto an unfurl tape.
+This all-encompassing state can be easily transposed onto an Unfurl tape.
 The simplest way to do it is to include the M-configuration next to the earlier
 defined readhead. In the following example, `1`, `2`, `3`, and `4` are M-configurations.
 ```
@@ -165,11 +165,19 @@ aaa4>aaa
 ```
 A careful reader might notice that the M-configuration can serve as the readhead itself,
 but it is good for readability to give an indication of which symbol is currently
-'under' the readhead.
+'under' the readhead.\
+Notably, this most recent example is already a pretty direct transcription of a
+Turing machine. Indeed, we now have all the tools to start generalizing.
 
 ### 2.2- General technique for converting a Turing machine to Unfurl substitution rules
 There is of course more than one way to do this, but the technique layed out here
-approaches optimal.
+approaches optimal.\
+#### 2.2.1- Query formatting
+The query can consist of any number of symbols from the alphabet, but should have
+'end-markers' on both ends. For example:
+```
+|001010|:
+```
 UNFINISHED
 
 ## 3- What is this good for?

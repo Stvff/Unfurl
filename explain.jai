@@ -85,7 +85,7 @@ explain_turing :: Line.[
 ,	.{.Result_Interm, ">aaa"}, .{.Result_Interm, "a>aa"}, .{.Result_Interm, "aa>a"}, .{.Result_Solved_Verbose, "aaa>"}, ECB
 ,	EML
 ,	.{.Header4, "2.1.2- The Unbounded Tape"}
-,	.{.Text, "Turing machines have infinite tapes. At least, they are not principially bounded."}
+,	.{.Text, "Turing machines sit on an infinite tape. At least, they are not principially bounded."}
 ,	.{.Text, "Unfurl begins with a finite tape, but there are many possible rulesets that expand the"}
 ,	.{.Text, "tape during evaluation, since the length of a rule's result can be larger than its input:"}, SCB
 ,	.{.Rule_Arg, "a"}, .{.Rule_Res, "bbb"}, .{.Query, "aaa"}, .{.Result_Solved, "bbbbbbbbb"}, ECB
@@ -99,18 +99,24 @@ explain_turing :: Line.[
 ,	.{.Text, "Finally, Turing machines have internal state. Unfurl does not have this at all."}
 ,	.{.Text, "However, that is not the end of the line; really the important part is the state"}
 ,	.{.Text, "of the whole system, tape and 'internal state' (or M-configuration) combined."}
-,	.{.Text, "This all-encompassing state can easily be transposed onto an unfurl tape."}
+,	.{.Text, "This all-encompassing state can be easily transposed onto an Unfurl tape."}
 ,	.{.Text, "The simplest way to do it is to include the M-configuration next to the earlier"}
 ,	.{.Text, "defined readhead. In the following example, `1`, `2`, `3`, and `4` are M-configurations."}, SCB
 ,	.{.Rule_Arg, "1> a"}, .{.Rule_Res, "a 2>"}, .{.Rule_Arg, "2> a"}, .{.Rule_Res, "a 3>"}, .{.Rule_Arg, "3> a"}, .{.Rule_Res, "a 4>"}
 ,	.{.Query, "1> aaaaa"}, .{.Result_Solved, "aaa4>aaa"}, ECB
 ,	.{.Text, "A careful reader might notice that the M-configuration can serve as the readhead itself,"}
 ,	.{.Text, "but it is good for readability to give an indication of which symbol is currently"}
-,	.{.Text, "'under' the readhead."}
+,	.{.Line, "'under' the readhead."}
+,	.{.Text, "Notably, this most recent example is already a pretty direct transcription of a"}
+,	.{.Text, "Turing machine. Indeed, we now have all the tools to start generalizing."}
 ,	EML
 ,	.{.Header3, "2.2- General technique for converting a Turing machine to Unfurl substitution rules"}
 ,	.{.Text, "There is of course more than one way to do this, but the technique layed out here"}
-,	.{.Text, "approaches optimal."}
+,	.{.Line, "approaches optimal."}
+,	.{.Header4, "2.2.1- Query formatting"}
+,	.{.Text, "The query can consist of any number of symbols from the alphabet, but should have"}
+,	.{.Text, "'end-markers' on both ends. For example:"}, SCB
+,	.{.Query, "|001010|"}, ECB
 ,	.{.Text, "UNFINISHED"}
 ,	EML
 ];
