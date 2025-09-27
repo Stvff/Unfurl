@@ -117,14 +117,23 @@ as if there is a readhead going through the tape, capitalizing the letter it loo
 >Aaa, intermediate
 a>Aa, intermediate
 aa>A, intermediate
+...
 ```
 Of course, the evaluator continues, because we did not fully constrain it.\
 To constrain it, we can include the readhead in the query, as well as including it
 in every rule, so that evaluation can only happen wherever the readhead is.
+```
+>a := a>;
+aaa:
+>aaa, intermediate
+a>aa, intermediate
+aa>a, intermediate
+aaa>, solved
+```
 
 #### 2.1.2- The Unbounded Tape
 Turing machines have infinite tapes. At least, they are not principially bounded.
-Unfurl begins with a finite tape, but there is a large number of rulesets that expand the
+Unfurl begins with a finite tape, but there are many possible rulesets that expand the
 tape during evaluation, since the length of a rule's result can be larger than its input:
 ```
 a := bbb;
@@ -132,12 +141,32 @@ aaa:
 bbbbbbbbb
 ```
 A good way to make use of this is to have 'end markers' on the tape, and some rules to
-expand the tape when required.
+expand the tape when required. Using our readhead from the previous section,
+we can make an orderly and infinitely expanding tape:
+```
+>a := a>;
+>| := >a|;
+>aaa|:
+```
 
-#### 2.1.2- 'Internal' State
+#### 2.1.2- The Internal State
 Finally, Turing machines have internal state. Unfurl does not have this at all.
-However, that is not the end of the line; internal state can be translated into
-symbols on the tape, and the ruleset adjusted accordingly. More on this later.
+However, that is not the end of the line; really the important part is the state
+of the whole system, tape and 'internal state' (or M-configuration) combined.
+This all-encompassing state can easily be transposed onto an unfurl tape.
+The simplest way to do it is to include the M-configuration next to the earlier
+defined readhead. In the following example, `1`, `2`, `3`, and `4` are M-configurations.
+```
+1> a := a 2>;
+2> a := a 3>;
+3> a := a 4>;
+1> aaaaa:
+aaa4>aaa
+```
+A careful reader might notice that the M-configuration can serve as the readhead itself,
+but it is good for readability to give an indication of which symbol is currently
+'under' the readhead.
+
 ### 2.2- General technique for converting a Turing machine to Unfurl substitution rules
 There is of course more than one way to do this, but the technique layed out here
 approaches optimal.
@@ -150,6 +179,6 @@ After I'd made the reference interpreter, I realized that it's really fascinatin
 have a single-operator turing complete language, and it's a fun sort of puzzle
 activity to play with.
 
-This being said, at some point I want to make a 'program searcher', that can find
-rulesets to solve problems on its own.
+This being said, at some point I would like to make a 'program searcher', that can
+find rulesets to solve problems on its own.
 

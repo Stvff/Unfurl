@@ -77,42 +77,37 @@ explain_turing :: Line.[
 ,	.{.Rule_Arg, "a"}, .{.Rule_Res, ">A"}, .{.Query, "aaa"}, ECB
 ,	.{.Text, "When we look at the intermediate results, we can see that the first three applications appear"}
 ,	.{.Text, "as if there is a readhead going through the tape, capitalizing the letter it looks at."}, SCB
-,	.{.Result_Interm, ">Aaa"}, .{.Result_Interm, "a>Aa"}, .{.Result_Interm, "aa>A"}, ECB
+,	.{.Result_Interm, ">Aaa"}, .{.Result_Interm, "a>Aa"}, .{.Result_Interm, "aa>A"}, .{.Text, "..."}, ECB
 ,	.{.Line, "Of course, the evaluator continues, because we did not fully constrain it."}
 ,	.{.Text, "To constrain it, we can include the readhead in the query, as well as including it"}
-,	.{.Text, "in every rule, so that evaluation can only happen wherever the readhead is."}
+,	.{.Text, "in every rule, so that evaluation can only happen wherever the readhead is."}, SCB
+,	.{.Rule_Arg, ">a"}, .{.Rule_Res, "a>"}, .{.Query, "aaa"}
+,	.{.Result_Interm, ">aaa"}, .{.Result_Interm, "a>aa"}, .{.Result_Interm, "aa>a"}, .{.Result_Solved_Verbose, "aaa>"}, ECB
 ,	EML
 ,	.{.Header4, "2.1.2- The Unbounded Tape"}
 ,	.{.Text, "Turing machines have infinite tapes. At least, they are not principially bounded."}
-,	.{.Text, "Unfurl begins with a finite tape, but there is a large number of rulesets that expand the"}
+,	.{.Text, "Unfurl begins with a finite tape, but there are many possible rulesets that expand the"}
 ,	.{.Text, "tape during evaluation, since the length of a rule's result can be larger than its input:"}, SCB
 ,	.{.Rule_Arg, "a"}, .{.Rule_Res, "bbb"}, .{.Query, "aaa"}, .{.Result_Solved, "bbbbbbbbb"}, ECB
 ,	.{.Text, "A good way to make use of this is to have 'end markers' on the tape, and some rules to"}
-,	.{.Text, "expand the tape when required."}
+,	.{.Text, "expand the tape when required. Using our readhead from the previous section,"}
+,	.{.Text, "we can make an orderly and infinitely expanding tape:"}, SCB
+,	.{.Rule_Arg, ">a"}, .{.Rule_Res, "a>"}, .{.Rule_Arg, ">|"}, .{.Rule_Res, ">a|"}
+,	.{.Query, ">aaa|"}, ECB
 ,	EML
-,	.{.Header4, "2.1.2- 'Internal' State"}
+,	.{.Header4, "2.1.2- The Internal State"}
 ,	.{.Text, "Finally, Turing machines have internal state. Unfurl does not have this at all."}
-,	.{.Text, "However, that is not the end of the line; internal state can be translated into"}
-,	.{.Text, "symbols on the tape, and the ruleset adjusted accordingly. More on this later."}
-// ,	.{.Header3, "2.2- Making the Evaluator 'Walk' and Externalizing Internal State"}
-// ,	.{.Text, "When directly simulating a turing machine, it can be impractical how unfurl evaluates"}
-// ,	.{.Text, "at all points on the tape at the same time. Indeed, it can lead to"}
-// ,	.{.Text, "guarenteed 'race conditions'. To mitigate this, there are two prominent strategies."}
-// ,	EML
-// ,	.{.Text, "The first technique is to constrain evaluation to one point in the tape using a 'readhead'"}
-// ,	.{.Text, "that is included in every rule."}, SCB
-// ,	.{.Rule_Arg, "|a"}, .{.Rule_Res, "b|"}, .{.Query, "|aaa"}, ECB
-// ,	.{.Text, "When looking at the intermediate states, we can see how the evaluation went very orderly:"}, SCB
-// ,	.{.Result_Interm, "|aaa"}, .{.Result_Interm, "b|aa"}, .{.Result_Interm, "bb|a"}, .{.Result_Solved_Verbose, "bbb|"}, ECB
-// ,	.{.Text, "As opposed to without the readhead:"}, SCB
-// ,	.{.Rule_Arg, "a"}, .{.Rule_Res, "b"}, .{.Query, "aaa"}, .{.Result_Interm, "aaa"}
-// ,	.{.Result_Interm, "baa"}, .{.Result_Interm, "aba"}, .{.Result_Interm, "aab"}
-// ,	.{.Result_Interm, "bba"}, .{.Result_Interm, "bab"}, .{.Result_Interm, "abb"}
-// ,	.{.Result_Solved_Verbose, "bbb"}, ECB
-// ,	EML
-// ,	.{.Text, "The second technique is to change the symbol set during evaluation."}
-// ,	.{.Text, "Generally this is only useful in conjuction with the first technique."}
-// ,	.{.Text, "UNFINISHED"}
+,	.{.Text, "However, that is not the end of the line; really the important part is the state"}
+,	.{.Text, "of the whole system, tape and 'internal state' (or M-configuration) combined."}
+,	.{.Text, "This all-encompassing state can easily be transposed onto an unfurl tape."}
+,	.{.Text, "The simplest way to do it is to include the M-configuration next to the earlier"}
+,	.{.Text, "defined readhead. In the following example, `1`, `2`, `3`, and `4` are M-configurations."}, SCB
+,	.{.Rule_Arg, "1> a"}, .{.Rule_Res, "a 2>"}, .{.Rule_Arg, "2> a"}, .{.Rule_Res, "a 3>"}, .{.Rule_Arg, "3> a"}, .{.Rule_Res, "a 4>"}
+,	.{.Query, "1> aaaaa"}, .{.Result_Solved, "aaa4>aaa"}, ECB
+,	.{.Text, "A careful reader might notice that the M-configuration can serve as the readhead itself,"}
+,	.{.Text, "but it is good for readability to give an indication of which symbol is currently"}
+,	.{.Text, "'under' the readhead."}
+,	EML
 ,	.{.Header3, "2.2- General technique for converting a Turing machine to Unfurl substitution rules"}
 ,	.{.Text, "There is of course more than one way to do this, but the technique layed out here"}
 ,	.{.Text, "approaches optimal."}
@@ -128,7 +123,7 @@ explain_usefulness :: Line.[
 ,	.{.Text, "have a single-operator turing complete language, and it's a fun sort of puzzle"}
 ,	.{.Text, "activity to play with."}
 ,	EML
-,	.{.Text, "This being said, at some point I want to make a 'program searcher', that can find"}
-,	.{.Text, "rulesets to solve problems on its own."}
+,	.{.Text, "This being said, at some point I would like to make a 'program searcher', that can"}
+,	.{.Text, "find rulesets to solve problems on its own."}
 ,	EML
 ];
