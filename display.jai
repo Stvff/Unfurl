@@ -129,6 +129,53 @@ print_lines_to_markdown :: (sb: *String_Builder, lines: []Line) {
 	}
 }
 
+print_lines_to_html :: (sb: *String_Builder, lines: []Line, add_header := false, add_footer := false) {
+head :: #string HTML
+<!doctype html>
+<html lang="en-CA">
+	<head>
+		<meta charset="utf-8" /> <meta name="viewport" content="width=device-width, initial-scale=1" /> <meta name="author" content="stvff" />
+		<title>Unfurl</title>
+		<style>
+		* { font-family: 'Noto Serif', serif; background-color: #111111; color: #DDD; }
+		pre code { font-family: monospace; background-color: #090909; padding-inline: 15px; }
+		.arg{ color: lightgreen; }
+		.res{ color: cyan; }
+		.syntax{ color: magenta; }
+		.query{ color: pink; }
+		.result_solved { color: lightblue; }
+		.result_interm { color: red; }
+		h1,h2,h3,h4 { color: yellow; }
+		</style>
+	</head>
+<body><main>
+HTML
+	if add_header print(sb, "%", head);
+	for line: lines if #complete line.type == {
+		case .Line; print(sb, "%<br/>\n", line.text);
+		case .Text; print(sb, "%\n", line.text);
+		case .Start_Code_Block; print(sb, "<pre><code>");
+		case .End_Code_Block; print(sb, "</code></pre>\n");
+		case .Rule_Arg;
+			print(sb, "<span class=\"arg\">%</span> <span class=\"syntax\">:=</span> ", line.text);
+		case .Rule_Res;
+			print(sb, "<span class=\"res\">%</span><span class=\"syntax\">;</span>\n", line.text);
+		case .Query;
+			print(sb, "<span class=\"query\">%</span><span class=\"syntax\">:</span>\n", line.text);
+		case .Result_Solved;
+			print(sb, "<span class=\"result_solved\">%</span>\n", line.text);
+		case .Result_Interm;
+			print(sb, "<span class=\"result_interm\">%</span>, intermediate\n", line.text);
+		case .Result_Solved_Verbose;
+			print(sb, "<span_class=\"result_solved\">%</span>, solved\n", line.text);
+		case .Header1; print(sb, "<h1>%</h1>\n", line.text);
+		case .Header2; print(sb, "<h2>%</h2>\n", line.text);
+		case .Header3; print(sb, "<h3>%</h3>\n", line.text);
+		case .Header4; print(sb, "<h4>%</h4>\n", line.text);
+	}
+	if add_footer print(sb, "</main></body></html>\n");
+}
+
 installation_guide :: Line.[
 	.{.Header1, "Installation"}
 ,	.{.Text, "Unfurl is just one executable, `unfurl` (`unfurl.exe` on windows)."}
@@ -154,6 +201,11 @@ installation_guide :: Line.[
 	print_lines_to_markdown(*sb, explain_turing);
 	print_lines_to_markdown(*sb, explain_usefulness);
 	write_entire_file("readme.md", *sb);
+
+	print_lines_to_html(*sb, explanation, add_header = true);
+	print_lines_to_html(*sb, explain_turing);
+	print_lines_to_html(*sb, explain_usefulness, add_footer = true);
+	write_entire_file("readme.html", *sb);
 }
 
 #import "Print_Color";
