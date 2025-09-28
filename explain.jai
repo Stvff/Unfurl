@@ -58,7 +58,7 @@ explanation :: Line.[
 ];
 
 explain_turing :: Line.[
-	.{.Header2, "2- Turing Compleness"}
+	.{.Header2, "2- Turing Completeness"}
 ,	.{.Text, "Unfurl is turing complete. The reason why anything is Turing complete is always somewhat"}
 ,	.{.Line, "vague, since it comes down to \"Can you do the things that a Turing machine can do?\""}
 ,	.{.Text, "The standard way to go about proving this is to provide a method to simulate any Turing"}
@@ -124,8 +124,8 @@ explain_turing :: Line.[
 ,	EML
 ,	.{.Header4, "2.2.2- Transcribing Rules"}
 ,	.{.Line, "Essentially, it is a simple translation of the 5-tuple state table."}
-,	.{.Text, "Take the M-configuration (q), the scanned symbol (s) on one side, the symbol to print (p)"}
-,	.{.Text, "and the next M-configuration (n)  on the other."}, SCB
+,	.{.Text, "Take the M-configuration (`q`) and the scanned symbol (`s`) on one side, the symbol"}
+,	.{.Text, "to print (`p`) and the next M-configuration (`n`)  on the other."}, SCB
 ,	.{.Rule_Arg, "{q> s"}, .{.Rule_Res, "{n> p"}, ECB
 ,	.{.Text, "However, the readhead often also needs to move. When this is a move to the right, this"}
 ,	.{.Text, "is done simply by moving the readhead right of the printed symbol in the rule result:"}, SCB
@@ -141,7 +141,7 @@ explain_turing :: Line.[
 ,	.{.Text, "The first is the tape expansion, as outlined in 2.1.2, albeit slightly modified:"}, SCB
 ,	.{.Rule_Arg, ">|"}, .{.Rule_Res, "> 0|"}
 ,	.{.Rule_Arg, "|<"}, .{.Rule_Res, "|0 <"}, ECB
-,	.{.Line, "We use `0` as the 'empty symbol' character here, which can of course be changed."}
+,	.{.Line, "We use `0` as the 'empty cell' symbol here, which can of course be changed."}
 ,	EML
 ,	.{.Text, "The second thing to be arranged is the flipped readhead from earlier."}
 ,	.{.Text, "To define any move of the readhead, that move has to be defined for every symbol"}
@@ -160,7 +160,19 @@ explain_turing :: Line.[
 ,	.{.Rule_Arg, "{H>"}, .{.Rule_Res, ""}, ECB
 ,	EML
 ,	.{.Header4, "2.2.4- Total Amount of Rules and Limits Thereof"}
-,	.{.Text, "UNFINISHED"}
+,	.{.Line, "Let Q be the total amount of M-configurations, and let"}
+,	.{.Line, "G be the total amount of symbols in the alphabet (including the 'empty cell' symbol)."}
+,	.{.Text, "The given technique requires R amount of rules for such a machine:"}
+,	EML
+,	.{.Text, "R = 2QG + 2"}
+,	EML
+,	.{.Text, "This does not count the rules required to split off intermediate sets (as that is"}
+,	.{.Text, "more of a debugging feature), but it would add Q amount of rules."}
+,	EML
+,	.{.Text, "The given value of R is also the minimum amount of rules that a transcribed"}
+,	.{.Line, "Turing machine can have in Unfurl substitutions."}
+,	.{.Text, "This is presented as fact, with proof by intimidation."}
+,	EML
 ];
 
 explain_usefulness :: Line.[

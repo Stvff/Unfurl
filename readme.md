@@ -91,7 +91,7 @@ Comments can be placed between parentheses (like so (they can nest)).\
 When calling the evaluator on multiple files at once, all their rules and queries are
 combined into one larger evaluation pool.
 
-## 2- Turing Compleness
+## 2- Turing Completeness
 Unfurl is turing complete. The reason why anything is Turing complete is always somewhat
 vague, since it comes down to "Can you do the things that a Turing machine can do?"\
 The standard way to go about proving this is to provide a method to simulate any Turing
@@ -187,8 +187,8 @@ Taking q to be the initial M-configuration, the readhead on the tape is formatte
 
 #### 2.2.2- Transcribing Rules
 Essentially, it is a simple translation of the 5-tuple state table.\
-Take the M-configuration (q), the scanned symbol (s) on one side, the symbol to print (p)
-and the next M-configuration (n)  on the other.
+Take the M-configuration (`q`) and the scanned symbol (`s`) on one side, the symbol
+to print (`p`) and the next M-configuration (`n`)  on the other.
 ```
 {q> s := {n> p;
 ```
@@ -212,7 +212,7 @@ The first is the tape expansion, as outlined in 2.1.2, albeit slightly modified:
 >| := > 0|;
 |< := |0 <;
 ```
-We use `0` as the 'empty symbol' character here, which can of course be changed.\
+We use `0` as the 'empty cell' symbol here, which can of course be changed.\
 
 The second thing to be arranged is the flipped readhead from earlier.
 To define any move of the readhead, that move has to be defined for every symbol
@@ -237,7 +237,19 @@ we can optionally choose for halting to mean the complete deletion of the readhe
 ```
 
 #### 2.2.4- Total Amount of Rules and Limits Thereof
-UNFINISHED
+Let Q be the total amount of M-configurations, and let\
+G be the total amount of symbols in the alphabet (including the 'empty cell' symbol).\
+The given technique requires R amount of rules for such a machine:
+
+R = 2QG + 2
+
+This does not count the rules required to split off intermediate sets (as that is
+more of a debugging feature), but it would add Q amount of rules.
+
+The given value of R is also the minimum amount of rules that a transcribed
+Turing machine can have in Unfurl substitutions.\
+This is presented as fact, with proof by intimidation.
+
 ## 3- What is this good for?
 I wanted to make a really simple language that I could practice
 nontrivial multithreading on.\
