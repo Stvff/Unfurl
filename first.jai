@@ -1,4 +1,4 @@
-release :: false;
+release :: true;
 make_readme :: release || true;
 
 #run {
@@ -7,6 +7,10 @@ make_readme :: release || true;
 	w := compiler_create_workspace("Unfurl");
 	options := get_build_options();
 	options.output_executable_name = "unfurl";
+	if release {
+		options.backend = .LLVM;
+		set_optimization(*options, .VERY_OPTIMIZED);
+	}
 
 	/* this does not work */
 	if array_find(options.compile_time_command_line, "-arm64") {
