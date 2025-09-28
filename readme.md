@@ -237,8 +237,8 @@ we can optionally choose for halting to mean the complete deletion of the readhe
 ```
 
 #### 2.2.4- Total Amount of Rules and Limits Thereof
-Let Q be the total amount of M-configurations, and let\
-G be the total amount of symbols in the alphabet (including the 'empty cell' symbol).\
+Let Q be the total amount of M-configurations, and let G be the total
+amount of symbols in the alphabet (including the 'empty cell' symbol).\
 The given technique requires R amount of rules for such a machine:
 
 R = 2QG + 2
@@ -246,8 +246,8 @@ R = 2QG + 2
 This does not count the rules required to split off intermediate sets (as that is
 more of a debugging feature), but it would add Q amount of rules.
 
-The given value of R is also the minimum amount of rules that a transcribed
-Turing machine can have in Unfurl substitutions.\
+The given value of R is also the minimum amount of Unfurl substitution rules
+that a transcribed Turing machine can have.\
 This is presented as fact, with proof by intimidation.
 
 ## 3- What is this good for?

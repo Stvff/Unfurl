@@ -160,8 +160,8 @@ explain_turing :: Line.[
 ,	.{.Rule_Arg, "{H>"}, .{.Rule_Res, ""}, ECB
 ,	EML
 ,	.{.Header4, "2.2.4- Total Amount of Rules and Limits Thereof"}
-,	.{.Line, "Let Q be the total amount of M-configurations, and let"}
-,	.{.Line, "G be the total amount of symbols in the alphabet (including the 'empty cell' symbol)."}
+,	.{.Text, "Let Q be the total amount of M-configurations, and let G be the total"}
+,	.{.Line, "amount of symbols in the alphabet (including the 'empty cell' symbol)."}
 ,	.{.Text, "The given technique requires R amount of rules for such a machine:"}
 ,	EML
 ,	.{.Text, "R = 2QG + 2"}
@@ -169,8 +169,8 @@ explain_turing :: Line.[
 ,	.{.Text, "This does not count the rules required to split off intermediate sets (as that is"}
 ,	.{.Text, "more of a debugging feature), but it would add Q amount of rules."}
 ,	EML
-,	.{.Text, "The given value of R is also the minimum amount of rules that a transcribed"}
-,	.{.Line, "Turing machine can have in Unfurl substitutions."}
+,	.{.Text, "The given value of R is also the minimum amount of Unfurl substitution rules"}
+,	.{.Line, "that a transcribed Turing machine can have."}
 ,	.{.Text, "This is presented as fact, with proof by intimidation."}
 ,	EML
 ];
