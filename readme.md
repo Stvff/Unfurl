@@ -171,15 +171,73 @@ Turing machine. Indeed, we now have all the tools to start generalizing.
 
 ### 2.2- General technique for converting a Turing machine to Unfurl substitution rules
 There is of course more than one way to do this, but the technique layed out here
-approaches optimal.\
+approaches optimal.
 #### 2.2.1- Query formatting
 The query can consist of any number of symbols from the alphabet, but should have
 'end-markers' on both ends. For example:
 ```
 |001010|:
 ```
-UNFINISHED
+Taking q to be the initial M-configuration, the readhead on the tape is formatted like so:
+```
+{q>:
+|001 {q> 0 10|:
+```
+(The spacing does not matter)
 
+#### 2.2.2- Transcribing Rules
+Essentially, it is a simple translation of the 5-tuple state table.\
+Take the M-configuration (q), the scanned symbol (s) on one side, the symbol to print (p)
+and the next M-configuration (n)  on the other.
+```
+{q> s := {n> p;
+```
+However, the readhead often also needs to move. When this is a move to the right, this
+is done simply by moving the readhead right of the printed symbol in the rule result:
+```
+{q> s := p {n>;
+```
+When moving left, we flip the readhead. The next section will explain how that
+is dealt with.
+```
+{q> s := <n} p;
+```
+
+#### 2.2.3- Boilerplate
+Next to the state-table, there are two (and a half) more things that need to be arranged
+before a functional Turing machine can be implemented.\
+
+The first is the tape expansion, as outlined in 2.1.2, albeit slightly modified:
+```
+>| := > 0|;
+|< := |0 <;
+```
+We use `0` as the 'empty symbol' character here, which can of course be changed.\
+
+The second thing to be arranged is the flipped readhead from earlier.
+To define any move of the readhead, that move has to be defined for every symbol
+in the alphabet of the Turing machine, as well as every M-configuration.
+```
+s <q} := {q> s;
+```
+The amount of rules here is the same as the amount of entries in the 5-tuple
+state table, but these left-moves require a lot less strain on the mind,
+as there's no state change or printed symbol
+
+The last half thing is defining what halting looks like, as well as producing
+intermediate steps for the final solution set. Defining the following rule for
+every M-configuration will split off the intermediate steps:
+```
+{q> := [q>;
+```
+This convention can also be used to define when the machine has halted, but
+we can optionally choose for halting to mean the complete deletion of the readhead:
+```
+{H> := ;
+```
+
+#### 2.2.4- Total Amount of Rules and Limits Thereof
+UNFINISHED
 ## 3- What is this good for?
 I wanted to make a really simple language that I could practice
 nontrivial multithreading on.\

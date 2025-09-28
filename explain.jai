@@ -112,13 +112,55 @@ explain_turing :: Line.[
 ,	EML
 ,	.{.Header3, "2.2- General technique for converting a Turing machine to Unfurl substitution rules"}
 ,	.{.Text, "There is of course more than one way to do this, but the technique layed out here"}
-,	.{.Line, "approaches optimal."}
+,	.{.Text, "approaches optimal."}
 ,	.{.Header4, "2.2.1- Query formatting"}
 ,	.{.Text, "The query can consist of any number of symbols from the alphabet, but should have"}
 ,	.{.Text, "'end-markers' on both ends. For example:"}, SCB
 ,	.{.Query, "|001010|"}, ECB
-,	.{.Text, "UNFINISHED"}
+,	.{.Text, "Taking q to be the initial M-configuration, the readhead on the tape is formatted like so:"}, SCB
+,	.{.Query, "{q>"}
+,	.{.Query, "|001 {q> 0 10|"},  ECB
+,	.{.Text, "(The spacing does not matter)"}
 ,	EML
+,	.{.Header4, "2.2.2- Transcribing Rules"}
+,	.{.Line, "Essentially, it is a simple translation of the 5-tuple state table."}
+,	.{.Text, "Take the M-configuration (q), the scanned symbol (s) on one side, the symbol to print (p)"}
+,	.{.Text, "and the next M-configuration (n)  on the other."}, SCB
+,	.{.Rule_Arg, "{q> s"}, .{.Rule_Res, "{n> p"}, ECB
+,	.{.Text, "However, the readhead often also needs to move. When this is a move to the right, this"}
+,	.{.Text, "is done simply by moving the readhead right of the printed symbol in the rule result:"}, SCB
+,	.{.Rule_Arg, "{q> s"}, .{.Rule_Res, "p {n>"}, ECB
+,	.{.Text, "When moving left, we flip the readhead. The next section will explain how that"}
+,	.{.Text, "is dealt with."}, SCB
+,	.{.Rule_Arg, "{q> s"}, .{.Rule_Res, "<n} p"}, ECB
+,	EML
+,	.{.Header4, "2.2.3- Boilerplate"}
+,	.{.Text, "Next to the state-table, there are two (and a half) more things that need to be arranged"}
+,	.{.Line, "before a functional Turing machine can be implemented."}
+,	EML
+,	.{.Text, "The first is the tape expansion, as outlined in 2.1.2, albeit slightly modified:"}, SCB
+,	.{.Rule_Arg, ">|"}, .{.Rule_Res, "> 0|"}
+,	.{.Rule_Arg, "|<"}, .{.Rule_Res, "|0 <"}, ECB
+,	.{.Line, "We use `0` as the 'empty symbol' character here, which can of course be changed."}
+,	EML
+,	.{.Text, "The second thing to be arranged is the flipped readhead from earlier."}
+,	.{.Text, "To define any move of the readhead, that move has to be defined for every symbol"}
+,	.{.Text, "in the alphabet of the Turing machine, as well as every M-configuration."}, SCB
+,	.{.Rule_Arg, "s <q}"}, .{.Rule_Res, "{q> s"}, ECB
+,	.{.Text, "The amount of rules here is the same as the amount of entries in the 5-tuple"}
+,	.{.Text, "state table, but these left-moves require a lot less strain on the mind,"}
+,	.{.Text, "as there's no state change or printed symbol"}
+,	EML
+,	.{.Text, "The last half thing is defining what halting looks like, as well as producing"}
+,	.{.Text, "intermediate steps for the final solution set. Defining the following rule for"}
+,	.{.Text, "every M-configuration will split off the intermediate steps:"}, SCB
+,	.{.Rule_Arg, "{q>"}, .{.Rule_Res, "[q>"}, ECB
+,	.{.Text, "This convention can also be used to define when the machine has halted, but"}
+,	.{.Text, "we can optionally choose for halting to mean the complete deletion of the readhead:"}, SCB
+,	.{.Rule_Arg, "{H>"}, .{.Rule_Res, ""}, ECB
+,	EML
+,	.{.Header4, "2.2.4- Total Amount of Rules and Limits Thereof"}
+,	.{.Text, "UNFINISHED"}
 ];
 
 explain_usefulness :: Line.[
