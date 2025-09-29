@@ -228,7 +228,8 @@ main :: () {
 			print_problem(tokens, problem);
 		}
 		print("---------------- Dimensions -----------------\n");
-		print_vars(max_arg_length, max_res_length, total_sol_count);
+		print("Maximum argument length: %\nMaximum result length: %\nTotal solution count: %\n", max_arg_length, max_res_length, total_sol_count);
+//		print_vars(max_arg_length, max_res_length, total_sol_count);
 		print("% -> %\n", arg_charset.(string), sol_charset.(string));
 		// print("Total amount of rulesets to try: %\n", max_arg_length*max_res_length*total_sol_count);
 		/* Theorem: All permutations of the charsets contain all the permutations of the subsets. */
