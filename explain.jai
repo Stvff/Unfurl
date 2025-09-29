@@ -166,7 +166,7 @@ explain_turing :: Line.[
 ,	.{.Text, "in the alphabet of the Turing machine, for every M-configuration."}, SCB
 ,	.{.Rule_Arg, "s <q}"}, .{.Rule_Res, "{q> s"}, ECB
 ,	.{.Text, "The amount of rules here is the same as the amount of entries in the 5-tuple"}
-,	.{.Text, "state table, but these left-moves require a lot less strain on the mind,"}
+,	.{.Text, "state table, but these left-moves place a lot less strain on the mind,"}
 ,	.{.Text, "as there is no state change or printed symbol."}
 ,	EML
 ,	.{.Text, "The last half thing is to define what halting looks like, as well as producing"}
