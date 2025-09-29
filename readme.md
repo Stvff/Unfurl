@@ -75,7 +75,7 @@ Results in:
 ```
 3
 ```
-When running the evaluator with `-all-states`, you can see all the intermediate steps.
+When running the evaluator with `-all-states`, it prints all the intermediate steps as well.
 ```
 NNN0, intermediate
 NN1, intermediate
@@ -84,10 +84,22 @@ N2, intermediate
 ```
 
 ### 1.1- Writing .furl files (aka my parser is not so smart so don't shake it too much it'll throw up)
-The only valid input is ascii.\
+The only valid input is ASCII.\
 All whitespace is ignored and removed (so spaces will not show up in rules,
 queries, or solutions).\
-Comments can be placed between parentheses (like so (they can nest)).\
+Comments can be placed between parentheses (like so (they can nest)).
+
+Rules consist of an argument, followed by `:=` and a result, ending with `;`:
+```
+Arg := Res;
+```
+Queries consist of the query string, ending with `:`;
+```
+Query:
+```
+Arguments, results, and queries can be any ASCII string besides whitespace, nor can they
+contain `:`, `=`, `;`, `(`, `)`.
+
 When calling the evaluator on multiple files at once, all their rules and queries are
 combined into one larger evaluation pool.
 
@@ -123,12 +135,22 @@ Of course, the evaluator continues, because we did not fully constrain it.\
 To constrain it, we can include the readhead in the query, as well as including it
 in every rule, so that evaluation can only happen wherever the readhead is.
 ```
->a := a>;
-aaa:
+>a := >A;
+>aaa:
+>Aaa
+a>aa:
+a>Aa
+aa>a:
+aa>A
+```
+This readhead doesn't move yet on its own, but making it 'walk' can be easily done from here:
+```
+>a := A>;
+>aaa:
 >aaa, intermediate
-a>aa, intermediate
-aa>a, intermediate
-aaa>, solved
+A>aa, intermediate
+AA>a, intermediate
+AAA>, solved
 ```
 
 #### 2.1.2- The Unbounded Tape
@@ -154,7 +176,7 @@ Finally, Turing machines have internal state. Unfurl does not have this at all.
 However, that is not the end of the line; really the important part is the state
 of the whole system, tape and 'internal state' (or M-configuration) combined.
 This all-encompassing state can be easily transposed onto an Unfurl tape.
-The simplest way to do it is to include the M-configuration next to the earlier
+The most straightforward way is to include the M-configuration next to the earlier
 defined readhead. In the following example, `1`, `2`, `3`, and `4` are M-configurations.
 ```
 1> a := a 2>;
@@ -166,12 +188,13 @@ aaa4>aaa
 A careful reader might notice that the M-configuration can serve as the readhead itself,
 but it is good for readability to give an indication of which symbol is currently
 'under' the readhead.\
-Notably, this most recent example is already a pretty direct transcription of a
+Notably, this last example is already a pretty direct transcription of a
 Turing machine. Indeed, we now have all the tools to start generalizing.
 
 ### 2.2- General technique for converting a Turing machine to Unfurl substitution rules
 There is of course more than one way to do this, but the technique layed out here
 approaches optimal.
+
 #### 2.2.1- Query formatting
 The query can consist of any number of symbols from the alphabet, but should have
 'end-markers' on both ends. For example:
@@ -181,9 +204,15 @@ The query can consist of any number of symbols from the alphabet, but should hav
 Taking q to be the initial M-configuration, the readhead on the tape is formatted like so:
 ```
 {q>:
-|001 {q> 0 10|:
+|001 {q>0 10|:
 ```
-(The spacing does not matter)
+The spacing is only to help us see the current symbol 'under' the readhed.
+`{` is added to the readhead for purposes that will become clear later, but for now it
+also serves to seperate between readhead and tape even more.\
+A tape consisting of only empty cells can be formatted as follows:
+```
+|{q>|:
+```
 
 #### 2.2.2- Transcribing Rules
 Essentially, it is a simple translation of the 5-tuple state table.\
@@ -207,7 +236,7 @@ is dealt with.
 Next to the state-table, there are two (and a half) more things that need to be arranged
 before a functional Turing machine can be implemented.\
 
-The first is the tape expansion, as outlined in 2.1.2, albeit slightly modified:
+The first is the tape expansion, as outlined in 2.1.2, including expansion to the left:
 ```
 >| := > 0|;
 |< := |0 <;
@@ -216,24 +245,28 @@ We use `0` as the 'empty cell' symbol here, which can of course be changed.\
 
 The second thing to be arranged is the flipped readhead from earlier.
 To define any move of the readhead, that move has to be defined for every symbol
-in the alphabet of the Turing machine, as well as every M-configuration.
+in the alphabet of the Turing machine, for every M-configuration.
 ```
 s <q} := {q> s;
 ```
 The amount of rules here is the same as the amount of entries in the 5-tuple
 state table, but these left-moves require a lot less strain on the mind,
-as there's no state change or printed symbol
+as there is no state change or printed symbol.
 
-The last half thing is defining what halting looks like, as well as producing
+The last half thing is to define what halting looks like, as well as producing
 intermediate steps for the final solution set. Defining the following rule for
 every M-configuration will split off the intermediate steps:
 ```
 {q> := [q>;
 ```
-This convention can also be used to define when the machine has halted, but
-we can optionally choose for halting to mean the complete deletion of the readhead:
+This convention can also be used to extra clearly denote when the machine has halted:
 ```
-{H> := ;
+{f> s := [H> s;
+```
+`f` here is the final M-configuration that results in halting.\
+But we can optionally choose for halting to mean the complete deletion of the readhead:
+```
+{f> s := s;
 ```
 
 #### 2.2.4- Total Amount of Rules and Limits Thereof
@@ -248,7 +281,9 @@ more of a debugging feature), but it would add Q amount of rules.
 
 The given value of R is also the minimum amount of Unfurl substitution rules
 that a transcribed Turing machine can have.\
-This is presented as fact, with proof by intimidation.
+There are proofs and some arguable exceptions for this, but for now
+this is presented as fact, with proof by intimidation.\
+Feel free to contact me with any questions or objections.
 
 ## 3- What is this good for?
 I wanted to make a really simple language that I could practice

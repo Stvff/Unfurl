@@ -41,17 +41,25 @@ explanation :: Line.[
 ,	.{.Query, "NNN0"}, ECB
 ,	.{.Text, "Results in:"}, SCB
 ,	.{.Result_Solved, "3"}, ECB
-,	.{.Text, "When running the evaluator with `-all-states`, you can see all the intermediate steps."}, SCB
+,	.{.Text, "When running the evaluator with `-all-states`, it prints all the intermediate steps as well."}, SCB
 ,	.{.Result_Interm, "NNN0"}
 ,	.{.Result_Interm, "NN1"}
 ,	.{.Result_Interm, "N2"}
 ,	.{.Result_Solved_Verbose, "3"}, ECB
 ,	EML
 ,	.{.Header3, "1.1- Writing .furl files (aka my parser is not so smart so don't shake it too much it'll throw up)"}
-,	.{.Line, "The only valid input is ascii."}
+,	.{.Line, "The only valid input is ASCII."}
 ,	.{.Text, "All whitespace is ignored and removed (so spaces will not show up in rules,"}
 ,	.{.Line, "queries, or solutions)."}
-,	.{.Line, "Comments can be placed between parentheses (like so (they can nest))."}
+,	.{.Text, "Comments can be placed between parentheses (like so (they can nest))."}
+,	EML
+,	.{.Text, "Rules consist of an argument, followed by `:=` and a result, ending with `;`:"}, SCB
+,	.{.Rule_Arg, "Arg"}, .{.Rule_Res, "Res"}, ECB
+,	.{.Text, "Queries consist of the query string, ending with `:`;"}, SCB
+,	.{.Query, "Query"}, ECB
+,	.{.Text, "Arguments, results, and queries can be any ASCII string besides whitespace, nor can they"}
+,	.{.Text, "contain `:`, `=`, `;`, `(`, `)`."}
+,	EML
 ,	.{.Text, "When calling the evaluator on multiple files at once, all their rules and queries are"}
 ,	.{.Text, "combined into one larger evaluation pool."}
 ,	EML
@@ -81,8 +89,13 @@ explain_turing :: Line.[
 ,	.{.Line, "Of course, the evaluator continues, because we did not fully constrain it."}
 ,	.{.Text, "To constrain it, we can include the readhead in the query, as well as including it"}
 ,	.{.Text, "in every rule, so that evaluation can only happen wherever the readhead is."}, SCB
-,	.{.Rule_Arg, ">a"}, .{.Rule_Res, "a>"}, .{.Query, "aaa"}
-,	.{.Result_Interm, ">aaa"}, .{.Result_Interm, "a>aa"}, .{.Result_Interm, "aa>a"}, .{.Result_Solved_Verbose, "aaa>"}, ECB
+,	.{.Rule_Arg, ">a"}, .{.Rule_Res, ">A"}
+,	.{.Query, ">aaa"}, .{.Result_Solved, ">Aaa"}
+,	.{.Query, "a>aa"}, .{.Result_Solved, "a>Aa"}
+,	.{.Query, "aa>a"}, .{.Result_Solved, "aa>A"}, ECB
+,	.{.Text, "This readhead doesn't move yet on its own, but making it 'walk' can be easily done from here:"}, SCB
+,	.{.Rule_Arg, ">a"}, .{.Rule_Res, "A>"}, .{.Query, ">aaa"}
+,	.{.Result_Interm, ">aaa"}, .{.Result_Interm, "A>aa"}, .{.Result_Interm, "AA>a"}, .{.Result_Solved_Verbose, "AAA>"}, ECB
 ,	EML
 ,	.{.Header4, "2.1.2- The Unbounded Tape"}
 ,	.{.Text, "Turing machines sit on an infinite tape. At least, they are not principially bounded."}
@@ -100,27 +113,32 @@ explain_turing :: Line.[
 ,	.{.Text, "However, that is not the end of the line; really the important part is the state"}
 ,	.{.Text, "of the whole system, tape and 'internal state' (or M-configuration) combined."}
 ,	.{.Text, "This all-encompassing state can be easily transposed onto an Unfurl tape."}
-,	.{.Text, "The simplest way to do it is to include the M-configuration next to the earlier"}
+,	.{.Text, "The most straightforward way is to include the M-configuration next to the earlier"}
 ,	.{.Text, "defined readhead. In the following example, `1`, `2`, `3`, and `4` are M-configurations."}, SCB
 ,	.{.Rule_Arg, "1> a"}, .{.Rule_Res, "a 2>"}, .{.Rule_Arg, "2> a"}, .{.Rule_Res, "a 3>"}, .{.Rule_Arg, "3> a"}, .{.Rule_Res, "a 4>"}
 ,	.{.Query, "1> aaaaa"}, .{.Result_Solved, "aaa4>aaa"}, ECB
 ,	.{.Text, "A careful reader might notice that the M-configuration can serve as the readhead itself,"}
 ,	.{.Text, "but it is good for readability to give an indication of which symbol is currently"}
 ,	.{.Line, "'under' the readhead."}
-,	.{.Text, "Notably, this most recent example is already a pretty direct transcription of a"}
+,	.{.Text, "Notably, this last example is already a pretty direct transcription of a"}
 ,	.{.Text, "Turing machine. Indeed, we now have all the tools to start generalizing."}
 ,	EML
 ,	.{.Header3, "2.2- General technique for converting a Turing machine to Unfurl substitution rules"}
 ,	.{.Text, "There is of course more than one way to do this, but the technique layed out here"}
 ,	.{.Text, "approaches optimal."}
+,	EML
 ,	.{.Header4, "2.2.1- Query formatting"}
 ,	.{.Text, "The query can consist of any number of symbols from the alphabet, but should have"}
 ,	.{.Text, "'end-markers' on both ends. For example:"}, SCB
 ,	.{.Query, "|001010|"}, ECB
 ,	.{.Text, "Taking q to be the initial M-configuration, the readhead on the tape is formatted like so:"}, SCB
 ,	.{.Query, "{q>"}
-,	.{.Query, "|001 {q> 0 10|"},  ECB
-,	.{.Text, "(The spacing does not matter)"}
+,	.{.Query, "|001 {q>0 10|"},  ECB
+,	.{.Text, "The spacing is only to help us see the current symbol 'under' the readhed."}
+,	.{.Text, "`{` is added to the readhead for purposes that will become clear later, but for now it"}
+,	.{.Line, "also serves to seperate between readhead and tape even more."}
+,	.{.Text, "A tape consisting of only empty cells can be formatted as follows:"}, SCB
+,	.{.Query, "|{q>|"}, ECB
 ,	EML
 ,	.{.Header4, "2.2.2- Transcribing Rules"}
 ,	.{.Line, "Essentially, it is a simple translation of the 5-tuple state table."}
@@ -138,26 +156,28 @@ explain_turing :: Line.[
 ,	.{.Text, "Next to the state-table, there are two (and a half) more things that need to be arranged"}
 ,	.{.Line, "before a functional Turing machine can be implemented."}
 ,	EML
-,	.{.Text, "The first is the tape expansion, as outlined in 2.1.2, albeit slightly modified:"}, SCB
+,	.{.Text, "The first is the tape expansion, as outlined in 2.1.2, including expansion to the left:"}, SCB
 ,	.{.Rule_Arg, ">|"}, .{.Rule_Res, "> 0|"}
 ,	.{.Rule_Arg, "|<"}, .{.Rule_Res, "|0 <"}, ECB
 ,	.{.Line, "We use `0` as the 'empty cell' symbol here, which can of course be changed."}
 ,	EML
 ,	.{.Text, "The second thing to be arranged is the flipped readhead from earlier."}
 ,	.{.Text, "To define any move of the readhead, that move has to be defined for every symbol"}
-,	.{.Text, "in the alphabet of the Turing machine, as well as every M-configuration."}, SCB
+,	.{.Text, "in the alphabet of the Turing machine, for every M-configuration."}, SCB
 ,	.{.Rule_Arg, "s <q}"}, .{.Rule_Res, "{q> s"}, ECB
 ,	.{.Text, "The amount of rules here is the same as the amount of entries in the 5-tuple"}
 ,	.{.Text, "state table, but these left-moves require a lot less strain on the mind,"}
-,	.{.Text, "as there's no state change or printed symbol"}
+,	.{.Text, "as there is no state change or printed symbol."}
 ,	EML
-,	.{.Text, "The last half thing is defining what halting looks like, as well as producing"}
+,	.{.Text, "The last half thing is to define what halting looks like, as well as producing"}
 ,	.{.Text, "intermediate steps for the final solution set. Defining the following rule for"}
 ,	.{.Text, "every M-configuration will split off the intermediate steps:"}, SCB
 ,	.{.Rule_Arg, "{q>"}, .{.Rule_Res, "[q>"}, ECB
-,	.{.Text, "This convention can also be used to define when the machine has halted, but"}
-,	.{.Text, "we can optionally choose for halting to mean the complete deletion of the readhead:"}, SCB
-,	.{.Rule_Arg, "{H>"}, .{.Rule_Res, ""}, ECB
+,	.{.Text, "This convention can also be used to extra clearly denote when the machine has halted:"}, SCB
+,	.{.Rule_Arg, "{f> s"}, .{.Rule_Res, "[H> s"}, ECB
+,	.{.Line, "`f` here is the final M-configuration that results in halting."}
+,	.{.Text, "But we can optionally choose for halting to mean the complete deletion of the readhead:"}, SCB
+,	.{.Rule_Arg, "{f> s"}, .{.Rule_Res, "s"}, ECB
 ,	EML
 ,	.{.Header4, "2.2.4- Total Amount of Rules and Limits Thereof"}
 ,	.{.Text, "Let Q be the total amount of M-configurations, and let G be the total"}
@@ -171,7 +191,9 @@ explain_turing :: Line.[
 ,	EML
 ,	.{.Text, "The given value of R is also the minimum amount of Unfurl substitution rules"}
 ,	.{.Line, "that a transcribed Turing machine can have."}
-,	.{.Text, "This is presented as fact, with proof by intimidation."}
+,	.{.Text, "There are proofs and some arguable exceptions for this, but for now"}
+,	.{.Line, "this is presented as fact, with proof by intimidation."}
+,	.{.Text, "Feel free to contact me with any questions or objections."}
 ,	EML
 ];
 
