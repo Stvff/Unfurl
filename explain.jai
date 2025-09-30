@@ -90,10 +90,8 @@ explain_turing :: Line.[
 ,	.{.Text, "To constrain it, we can include the readhead in the query, as well as including it"}
 ,	.{.Text, "in every rule, so that evaluation can only happen wherever the readhead is."}, SCB
 ,	.{.Rule_Arg, ">a"}, .{.Rule_Res, ">A"}
-,	.{.Query, ">aaa"}, .{.Result_Solved, ">Aaa"}
-,	.{.Query, "a>aa"}, .{.Result_Solved, "a>Aa"}
-,	.{.Query, "aa>a"}, .{.Result_Solved, "aa>A"}, ECB
-,	.{.Text, "This readhead doesn't move yet on its own, but making it 'walk' can be easily done from here:"}, SCB
+,	.{.Query, ">aaa"}, .{.Result_Solved, ">Aaa"}, ECB
+,	.{.Text, "Now this readhead doesn't move on its own, but making it 'walk' can be easily done from here:"}, SCB
 ,	.{.Rule_Arg, ">a"}, .{.Rule_Res, "A>"}, .{.Query, ">aaa"}
 ,	.{.Result_Interm, ">aaa"}, .{.Result_Interm, "A>aa"}, .{.Result_Interm, "AA>a"}, .{.Result_Solved_Verbose, "AAA>"}, ECB
 ,	EML

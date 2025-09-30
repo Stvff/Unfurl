@@ -1,115 +1,45 @@
 (
 	This is a rule 110 implementation, proving that this language is turing complete.
 	It essentially forces the evaluator to go through the list from left to right, then
-	from right to left, then back again, and then finally a right to left 'reset' pass,
-
-	It needs to do so many loops because it cannot otherwise distinguish the current
-	state of evalution.
+	return to the start.
 
 	'Essentially forces the evaluator' means that these rules are made in such a way
 	that there is always exactly 1 valid next solution for any given state.
-	Indeed, it is quite directly simulating a turing machine, except where a turing machine
-	maintains internal state, this needs to save all the space on the tape.
+	Indeed, it is quite directly simulating a turing machine.
 
-	For the case of presenting intermediate solutions, it abuses the overloading of "<_"
-	Which can evaluate either to ">-", which continues evaluation, or "^_", which completely
-	halts evaluation. (It also does some cleanup, but that's entirely easthetics).
+	For the case of presenting intermediate solutions, it abuses the overloading of "|<"
+	Which can evaluate either to a new readhead, which continues evaluation, or to only
+	"|>", which completely halts evaluation.
 
 	The input format is as follows:
-	It starts with a "|". This is for easthetics in the representation, and is optional.
-	Then, there is any number of "<". This amount dictates how many iterations it should
-	evaluate.
+
+	It starts with any number of "|". This amount dictates how many iterations it should
+	evaluate. These are followed by "<", which starts the machine.
 	The tape itself consists of "_" for an empty spot, and "#" for a filled-in space.
-	Finally, the tape is terminated with "_>". Where that final "_" is not optional.
+	Finally, the tape is terminated with "|".
 	The tape will automatically grow, and my advice is to not place any leading "_", as
 	it will make the output less pretty.
 )
-(
-(first we encode left to right)
-<_ := >-;
-<# := >%%;
--_ := --;
-._ := %-;
-%_ := %-;
--# := %%;
-%# := %.;
-.# := ..;
 
-(when we've reached the end, we encode right to left)
--> := `<;
-.> := `<;
-%` := @`;
--` := ``;
-.` := ``;
-%@ := @@;
--@ := `@;
-.@ := `@;
-
-(We go to a different state again)
->` := ~;
->@ := W;
-~` := ~~;
-W` := W~;
-~@ := ~W;
-W@ := WW;
-
-(Hopefully the final pass)
-~< := _>;
-~_ := __;
-W_ := #_;
-~# := _#;
-W# := ##;
-
-(Show all intermediate solutions too)
-(<_ := ^_;
-<# := ^#;
-<^_ := ^_;)
-
-(|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<#_>:)
-
-(these take a lot longer to run)
-(|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<#_>:)
-|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<#_>:
-)
-
-(
-	(Some tests for edge cases)
-	<______#_>:
-	<_____##_>:
-	<____###_>:
-	<___##_#_>:
-	<__#####_>:
-	<__#___#_>:
-	<__######____>:
-	<__#######_>:
-	<__###_#_>:
-	<__#####_#_>:
-	<__#####_###_>:
-	<_#_#_#_#_>:
-	<#########>:
-
-	|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<_____________________________#_>:
-	|<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<_______________________________________________#_>:
-)
-
-{A>` := ` {A>;
-{B>` := ` {A>;
+{A>_ := _ {A>;
+{B>_ := _ {A>;
 {B># := # {C>;
-{C>` := ` {A>;
+{C>_ := _ {A>;
 
-` {A># := # # {B>;
-# {C># := ` # {C>;
+_ {A># := # # {B>;
+# {C># := _ # {C>;
 
 {A>| := <|;
 {B>| := <|;
 {C>| := <|;
-`< := <`;
+_< := <_;
 #< := <#;
 
-|<` := {A>`;
-|<# := `{A>#;
+|<_ := {A>_;
+|<# := _{A>#;
 
 |< := |>;
 
-(|||||<#|:)
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||<#|:
+|||||||||||||||||||||||||||||||||||||||<#|:
+
+(|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||<#|:)
