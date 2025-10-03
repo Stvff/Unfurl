@@ -122,7 +122,7 @@ explain_turing :: Line.[
 ,	.{.Text, "Turing machine. Indeed, we now have all the tools to start generalizing."}
 ,	EML
 ,	.{.Header3, "2.2- General technique for converting a Turing machine to Unfurl substitution rules"}
-,	.{.Text, "There is of course more than one way to do this, but the technique layed out here"}
+,	.{.Text, "There is of course more than one way to do this, but the technique laid out here"}
 ,	.{.Text, "approaches optimal."}
 ,	EML
 ,	.{.Header4, "2.2.1- Query formatting"}
@@ -152,12 +152,12 @@ explain_turing :: Line.[
 ,	EML
 ,	.{.Header4, "2.2.3- Boilerplate"}
 ,	.{.Text, "Next to the state-table, there are two (and a half) more things that need to be arranged"}
-,	.{.Line, "before a functional Turing machine can be implemented."}
+,	.{.Text, "before a functional Turing machine can be implemented."}
 ,	EML
 ,	.{.Text, "The first is the tape expansion, as outlined in 2.1.2, including expansion to the left:"}, SCB
 ,	.{.Rule_Arg, ">|"}, .{.Rule_Res, "> 0|"}
 ,	.{.Rule_Arg, "|<"}, .{.Rule_Res, "|0 <"}, ECB
-,	.{.Line, "We use `0` as the 'empty cell' symbol here, which can of course be changed."}
+,	.{.Text, "We use `0` as the 'empty cell' symbol here, which can of course be changed."}
 ,	EML
 ,	.{.Text, "The second thing to be arranged is the flipped readhead from earlier."}
 ,	.{.Text, "To define any move of the readhead, that move has to be defined for every symbol"}
